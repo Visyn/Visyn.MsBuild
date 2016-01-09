@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Documents;
 using System.Xml.Serialization;
 using ProtoLib.Util.Xml;
+using System.Linq;
 
 namespace Visyn.Build.VisualStudio
 {
@@ -13,6 +13,11 @@ namespace Visyn.Build.VisualStudio
         ElementName = "Project")]
     public class VisualStudioCsProject
     {
+        [XmlIgnore]
+        public string FileName { get; private set; }
+        [XmlIgnore]
+        public string Path => System.IO.Path.GetDirectoryName(FileName);
+
         /// <remarks/>
         [XmlElement("ProjectImport", typeof(Import))]
         [XmlElement("ItemGroup", typeof(ItemGroup))]
@@ -33,18 +38,42 @@ namespace Visyn.Build.VisualStudio
         [XmlIgnore]
         public List<VsAssemblyInfo> References { get; private set; } = new List<VsAssemblyInfo>();
 
+        private List<string> _dependancies;
         [XmlIgnore]
-        public List<string> SourceFiles { get; private set; } = new List<string>();
+        public List<string> Dependencies
+        {
+            get
+            {
+                _dependancies = new List<string>();
+                foreach (var item in Resources)
+                {
+                    if (string.IsNullOrWhiteSpace(item.Dependancy)) continue;
+                    var dep = item.Dependancy.Trim();
+                    if(!_dependancies.Contains(dep)) _dependancies.Add(dep);
+                }
+                return _dependancies;
+            }
+        }
+
         [XmlIgnore]
-        public List<string> Dependencies { get; private set; } = new List<string>();
+        public List<VisualStudioProjectFile> Resources { get; private set; } = new List<VisualStudioProjectFile>();
+
         [XmlIgnore]
-        public List<string> Resources { get; private set; } = new List<string>();
+        public List<VisualStudioProjectFile> MissingFiles { get; private set; } = new List<VisualStudioProjectFile>();
 
         public static VisualStudioCsProject Deserialize(string fileName, Action<object, Exception> exceptionHandler)
         {
             var project = XmlIO.Deserialize<VisualStudioCsProject>(fileName, exceptionHandler);
             if (project == null) return null;
-            foreach (var item in project.Items)
+            project.Analyze(fileName, exceptionHandler);
+            return project;
+        }
+
+        private void Analyze(string fileName, Action<object, Exception> exceptionHandler)
+        {
+            FileName = fileName;
+            var path = Path;
+            foreach (var item in Items)
             {
                 try
                 {
@@ -54,7 +83,7 @@ namespace Visyn.Build.VisualStudio
                         var assembly = propertyGroup.AssemblyName;
                         if (assembly != null)
                         {
-                            project.Assemblies.Add(new VsAssemblyInfo(propertyGroup));
+                            Assemblies.Add(new VsAssemblyInfo(propertyGroup));
                         }
                         continue;
                     }
@@ -68,40 +97,11 @@ namespace Visyn.Build.VisualStudio
                                 var r = VsAssemblyInfo.CreateIfValid(reference);
                                 if (r != null)
                                 {
-                                    project.References.Add(r);
-                                }
-                            }
-                            continue;
-                        }
-                        if (itemGroup.EmbeddedResource != null)
-                        {
-                            foreach(ProjectItemGroupEmbeddedResource embedded in itemGroup.EmbeddedResource)
-                            {
-                                project.Resources.Add(embedded.Include);
-                            }
-                        }
-                        if (itemGroup.Resource != null)
-                        {
-
-                        }
-                        if (itemGroup.ProjectReference != null)
-                        {
-
-                        }
-                        if(itemGroup.Compile != null)
-                        {
-                            foreach(var sourceFile in itemGroup.Compile)
-                            {
-                                if(!string.IsNullOrWhiteSpace(sourceFile.Include))
-                                {
-                                    project.SourceFiles.Add(sourceFile.Include);
-                                }
-                                if(!string.IsNullOrWhiteSpace(sourceFile.DependentUpon))
-                                {
-                                    project.Dependencies.Add(sourceFile.DependentUpon);
+                                    References.Add(r);
                                 }
                             }
                         }
+                        Resources.AddRange(itemGroup.SourceFiles(path));
                     }
                 }
                 catch (Exception exc)
@@ -109,50 +109,10 @@ namespace Visyn.Build.VisualStudio
                     if (exceptionHandler != null) exceptionHandler(null, exc);
                     else throw;
                 }
-
             }
-            return project;
-        }
-    }
 
-    public class VsAssemblyInfo
-    {
 
-        public string Name { get; }
-        public string Version { get; }
-        public VsAssemblyInfo(PropertyGroup group)
-        {
-            Name = group.AssemblyName;
-            Version = group.AssemblyVersion;
-        }
-
-        public VsAssemblyInfo(string name,string version)
-        {
-            Name = name;
-            Version = version;
-        }
-
-        public override string ToString()
-        {
-            return $"{Name} {Version}";
-        }
-
-        public static VsAssemblyInfo CreateIfValid(ProjectItemGroupReference reference)
-        {
-            try
-            {
-            if(!string.IsNullOrWhiteSpace(reference.Include))
-            {
-                var split = reference.Include.Split(',');
-                if(!string.IsNullOrWhiteSpace(split[0]))
-                {
-                    return new VsAssemblyInfo(split[0].Trim(), split.Length > 1 ? split[1].Trim() : "");
-                }
-
-            }
-            }
-            catch (Exception) { /* Ignore */}
-            return null;
+            MissingFiles.AddRange(Resources.Where(resource => (!resource.FileExists && (resource.ResourceType != ResourceType.Reference))));
         }
     }
 }

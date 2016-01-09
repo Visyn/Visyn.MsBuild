@@ -57,15 +57,21 @@ namespace Visyn.Build
                 {
                     terminal.AppendLine('\t' + assembly.ToString());
                 }
-                terminal.AppendLine($"Source Files {VisualStudioCsProject.SourceFiles.Count}");
-                foreach(var source in VisualStudioCsProject.SourceFiles)
+                terminal.AppendLine($"Source Files {VisualStudioCsProject.Resources.Count}");
+                foreach(var resource in VisualStudioCsProject.Resources)
                 {
-                    terminal.AppendLine('\t'+source);
+                    terminal.AppendLine('\t'+resource.ToString());
                 }
-                terminal.AppendLine($"Resources {VisualStudioCsProject.Resources.Count}");
-                foreach (var resource in VisualStudioCsProject.Resources)
+                terminal.AppendLine($"Dependancies {VisualStudioCsProject.Dependencies.Count}");
+                foreach (var dependancy in VisualStudioCsProject.Dependencies)
                 {
-                    terminal.AppendLine('\t' + resource);
+                    terminal.AppendLine('\t' + dependancy);
+                }
+
+                terminal.AppendLine($"Missing Files: {VisualStudioCsProject.MissingFiles.Count}");
+                foreach (var missing in VisualStudioCsProject.MissingFiles)
+                {
+                    terminal.AppendLine('\t' + missing.Path);
                 }
             }
             return;

@@ -14,7 +14,7 @@
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <AssemblyVersion>1.0.0.64</AssemblyVersion>
+    <AssemblyVersion>1.0.0.87</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -74,8 +74,13 @@
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VisualStudio\Class1.cs" />
+    <Compile Include="VisualStudio\Import.cs" />
+    <Compile Include="VisualStudio\ItemGroup.cs" />
+    <Compile Include="VisualStudio\PropertyGroup.cs" />
+    <Compile Include="VisualStudio\ResourceType.cs" />
     <Compile Include="VisualStudio\VisualStudioCsProject.cs" />
+    <Compile Include="VisualStudio\VisualStudioProjectFile.cs" />
+    <Compile Include="VisualStudio\VsAssemblyInfo.cs" />
     <Compile Include="Wix\VisualStudioProject.cs" />
     <Compile Include="Wix\WixProjectXml.cs" />
     <Compile Include="App.xaml.cs">
