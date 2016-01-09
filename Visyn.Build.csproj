@@ -14,7 +14,7 @@
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <AssemblyVersion>1.0.0.37</AssemblyVersion>
+    <AssemblyVersion>1.0.0.64</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -74,6 +74,8 @@
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="VisualStudio\Class1.cs" />
+    <Compile Include="VisualStudio\VisualStudioCsProject.cs" />
     <Compile Include="Wix\VisualStudioProject.cs" />
     <Compile Include="Wix\WixProjectXml.cs" />
     <Compile Include="App.xaml.cs">
@@ -112,9 +114,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="VCs\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Util\ProtoLib.Util.csproj">
       <Project>{b00939b4-84eb-436c-a32d-219f061201cc}</Project>

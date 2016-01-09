@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows;
 using Microsoft.Win32;
 using ProtoLib.Util.Xml;
+using Visyn.Build.VisualStudio;
 using Visyn.Build.Wix;
 
 namespace Visyn.Build
@@ -12,7 +13,8 @@ namespace Visyn.Build
     /// </summary>
     public partial class MainWindow : Window
     {
-        Project WixProject { get; set; }
+        WixProject WixProject { get; set; }
+        VisualStudioCsProject VisualStudioCsProject { get; set; }
 
         public MainWindow()
         {
@@ -30,16 +32,48 @@ namespace Visyn.Build
         private void openMenuItem_ItemClick(object sender, DevExpress.Xpf.Bars.ItemClickEventArgs e)
         {
             OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter = "Wix Project (*.wixproj)|*.wixproj|Visual Studio Project (*.vsproj)|*.vsproj";
+            dialog.Filter = "Wix WixProject (*.wixproj)|*.wixproj|Visual Studio c# VisualStudioCsProject (*.csproj)|*.csproj";
             if(dialog.ShowDialog(this) == true)
             {
-                openWixProject(dialog.FileName);
+                string filename = dialog.FileName;
+                if(filename.EndsWith(".wixproj")) OpenWixProject(filename);
+                else if (filename.EndsWith(".csproj")) OpenVisualStudioProject(filename);
             }
         }
 
-        private void openWixProject(string fileName)
+        private void OpenVisualStudioProject(string fileName)
         {
-            WixProject = XmlIO.Deserialize<Project>(fileName, ExceptionHanddler);
+            VisualStudioCsProject = VisualStudioCsProject.Deserialize(fileName, ExceptionHanddler);
+            if(VisualStudioCsProject != null)
+            {
+                terminal.AppendLine($"Opened Visual C# Project File: {Path.GetFileName(fileName)}");
+                terminal.AppendLine($"Output {VisualStudioCsProject.Assemblies.Count} Assemblies");
+                foreach(var assembly in VisualStudioCsProject.Assemblies)
+                {
+                    terminal.AppendLine('\t'+assembly.ToString());
+                }
+                terminal.AppendLine($"Referenced {VisualStudioCsProject.References.Count} Assemblies");
+                foreach (var assembly in VisualStudioCsProject.References)
+                {
+                    terminal.AppendLine('\t' + assembly.ToString());
+                }
+                terminal.AppendLine($"Source Files {VisualStudioCsProject.SourceFiles.Count}");
+                foreach(var source in VisualStudioCsProject.SourceFiles)
+                {
+                    terminal.AppendLine('\t'+source);
+                }
+                terminal.AppendLine($"Resources {VisualStudioCsProject.Resources.Count}");
+                foreach (var resource in VisualStudioCsProject.Resources)
+                {
+                    terminal.AppendLine('\t' + resource);
+                }
+            }
+            return;
+        }
+
+        private void OpenWixProject(string fileName)
+        {
+            WixProject = XmlIO.Deserialize<WixProject>(fileName, ExceptionHanddler);
             if (WixProject != null)
             {
                 var projects = WixProject.Projects;
