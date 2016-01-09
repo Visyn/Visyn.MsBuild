@@ -11,12 +11,9 @@ namespace Visyn.Build.VisualStudio
     [XmlRoot(Namespace = "http://schemas.microsoft.com/developer/msbuild/2003", 
         IsNullable = false, 
         ElementName = "Project")]
-    public class VisualStudioCsProject
+    public class VisualStudioCsProject : ProjectFileBase
     {
-        [XmlIgnore]
-        public string FileName { get; private set; }
-        [XmlIgnore]
-        public string Path => System.IO.Path.GetDirectoryName(FileName);
+        public static string FileFilter = "Visual Studio c# Project (*.csproj)|*.csproj";
 
         /// <remarks/>
         [XmlElement("ProjectImport", typeof(Import))]

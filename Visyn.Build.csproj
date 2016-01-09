@@ -14,7 +14,7 @@
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <AssemblyVersion>1.0.0.87</AssemblyVersion>
+    <AssemblyVersion>1.0.0.97</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -74,14 +74,18 @@
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VisualStudio\Import.cs" />
-    <Compile Include="VisualStudio\ItemGroup.cs" />
-    <Compile Include="VisualStudio\PropertyGroup.cs" />
-    <Compile Include="VisualStudio\ResourceType.cs" />
-    <Compile Include="VisualStudio\VisualStudioCsProject.cs" />
-    <Compile Include="VisualStudio\VisualStudioProjectFile.cs" />
-    <Compile Include="VisualStudio\VsAssemblyInfo.cs" />
-    <Compile Include="Wix\VisualStudioProject.cs" />
+    <Compile Include="VisualStudio.CsProj\Import.cs" />
+    <Compile Include="VisualStudio.CsProj\ItemGroup.cs" />
+    <Compile Include="ProjectFileBase.cs" />
+    <Compile Include="VisualStudio.CsProj\PropertyGroup.cs" />
+    <Compile Include="VisualStudio.CsProj\ResourceType.cs" />
+    <Compile Include="VisualStudio.CsProj\VisualStudioCsProject.cs" />
+    <Compile Include="VisualStudio.CsProj\VisualStudioProjectFile.cs" />
+    <Compile Include="VisualStudio.CsProj\VsAssemblyInfo.cs" />
+    <Compile Include="VisualStudio.msbuild\MsBuild.cs" />
+    <Compile Include="VisualStudio.sln\VisualStudioSolution.cs" />
+    <Compile Include="VisualStudioProject.cs" />
+    <Compile Include="Wix\WixProject.cs" />
     <Compile Include="Wix\WixProjectXml.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>

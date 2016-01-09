@@ -4,6 +4,7 @@ using System.Windows;
 using Microsoft.Win32;
 using ProtoLib.Util.Xml;
 using Visyn.Build.VisualStudio;
+using Visyn.Build.VisualStudio.MsBuild;
 using Visyn.Build.Wix;
 
 namespace Visyn.Build
@@ -13,6 +14,7 @@ namespace Visyn.Build
     /// </summary>
     public partial class MainWindow : Window
     {
+        MsBuildProject MsBuildProject { get; set; }
         WixProject WixProject { get; set; }
         VisualStudioCsProject VisualStudioCsProject { get; set; }
 
@@ -31,22 +33,45 @@ namespace Visyn.Build
 
         private void openMenuItem_ItemClick(object sender, DevExpress.Xpf.Bars.ItemClickEventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter = "Wix WixProject (*.wixproj)|*.wixproj|Visual Studio c# VisualStudioCsProject (*.csproj)|*.csproj";
+            OpenFileDialog dialog = new OpenFileDialog
+            {
+                Filter = $"{MsBuildProject.FileFilter}|{VisualStudioCsProject.FileFilter}|{WixProject.FileFilter}"
+            };
             if(dialog.ShowDialog(this) == true)
             {
                 string filename = dialog.FileName;
                 if(filename.EndsWith(".wixproj")) OpenWixProject(filename);
                 else if (filename.EndsWith(".csproj")) OpenVisualStudioProject(filename);
+                else if (filename.EndsWith(".proj")) OpenMsBuildProject(filename);
             }
         }
 
-        private void OpenVisualStudioProject(string fileName)
+        private void OpenMsBuildProject(string filename)
         {
-            VisualStudioCsProject = VisualStudioCsProject.Deserialize(fileName, ExceptionHanddler);
+            MsBuildProject = MsBuildProject.Deserialize(filename, ExceptionHanddler);
+            if (MsBuildProject != null)
+            {
+                terminal.AppendLine($"Opened Visual C# Project File: {Path.GetFileName(filename)}");
+                terminal.AppendLine($"Projects: {MsBuildProject.VisualStudioProjects.Count}");
+                foreach (var project in MsBuildProject.VisualStudioProjects)
+                {
+                    terminal.AppendLine($"\t{project.Name}");
+                }
+                terminal.AppendLine($"Missing Projects: {MsBuildProject.MissingProjects.Count}");
+                foreach (var project in MsBuildProject.MissingProjects)
+                {
+                    terminal.AppendLine($"\t{project.Name}");
+                }
+            }
+        }
+
+        private void OpenVisualStudioProject(string filename)
+        {
+
+            VisualStudioCsProject = VisualStudioCsProject.Deserialize(filename, ExceptionHanddler);
             if(VisualStudioCsProject != null)
             {
-                terminal.AppendLine($"Opened Visual C# Project File: {Path.GetFileName(fileName)}");
+                terminal.AppendLine($"Opened Visual C# Project File: {Path.GetFileName(filename)}");
                 terminal.AppendLine($"Output {VisualStudioCsProject.Assemblies.Count} Assemblies");
                 foreach(var assembly in VisualStudioCsProject.Assemblies)
                 {
@@ -77,13 +102,13 @@ namespace Visyn.Build
             return;
         }
 
-        private void OpenWixProject(string fileName)
+        private void OpenWixProject(string filename)
         {
-            WixProject = XmlIO.Deserialize<WixProject>(fileName, ExceptionHanddler);
+            WixProject = XmlIO.Deserialize<WixProject>(filename, ExceptionHanddler);
             if (WixProject != null)
             {
                 var projects = WixProject.Projects;
-                var shortFile = Path.GetFileName(fileName);
+                var shortFile = Path.GetFileName(filename);
                 terminal.AppendLine($"Opened Wix Project File: {shortFile}");
                 terminal.AppendLine($"Found {projects.Count} projects");
                 foreach (var project in projects)

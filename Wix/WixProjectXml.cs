@@ -1,54 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
 namespace Visyn.Build.Wix
 {
-    /// <remarks/>
-    [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003", TypeName = "WixProject")]
-    [XmlRoot(Namespace = "http://schemas.microsoft.com/developer/msbuild/2003", 
-        IsNullable = false, 
-        ElementName = "Project")]
-    public class WixProject
-    {
-        /// <remarks/>
-        [XmlElement("Import", typeof(ProjectImport))]
-        [XmlElement("ItemGroup", typeof(ProjectItemGroup))]
-        [XmlElement("PropertyGroup", typeof(ProjectPropertyGroup))]
-        public object[] Items { get; set; }
-
-        /// <remarks/>
-        [XmlAttribute()]
-        public decimal ToolsVersion { get; set; }
-
-        /// <remarks/>
-        [XmlAttribute()]
-        public string DefaultTargets { get; set; }
-
-        [XmlIgnore]
-        public List<VisualStudioProject> Projects 
-        {
-            get
-            {
-                var list = new List<VisualStudioProject>();
-                foreach (var item in Items)
-                {
-                    var itemGroup = item as ProjectItemGroup;
-                    if (itemGroup?.ProjectReference != null)
-                    {
-                        foreach (var reference in itemGroup.ProjectReference)
-                        {
-                            if(VisualStudioProject.IsValidProjectReference(reference))
-                            {
-                                list.Add(new VisualStudioProject(reference));
-                            }
-                        }
-                    }
-                }
-                return list;
-            }
-        }
-    }
-
     /// <remarks/>
     [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
     public class ProjectImport
