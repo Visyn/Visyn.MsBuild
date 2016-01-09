@@ -4,41 +4,25 @@ using System.Xml.Serialization;
 namespace Visyn.Build.Wix
 {
     /// <remarks/>
-    [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
-    [XmlRoot(Namespace = "http://schemas.microsoft.com/developer/msbuild/2003", IsNullable = false)]
-    public partial class Project
+    [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003", TypeName = "WixProject")]
+    [XmlRoot(Namespace = "http://schemas.microsoft.com/developer/msbuild/2003", 
+        IsNullable = false, 
+        ElementName = "Project")]
+    public class WixProject
     {
-        private object[] itemsField;
-
-        private decimal toolsVersionField;
-
-        private string defaultTargetsField;
-
         /// <remarks/>
         [XmlElement("Import", typeof(ProjectImport))]
         [XmlElement("ItemGroup", typeof(ProjectItemGroup))]
         [XmlElement("PropertyGroup", typeof(ProjectPropertyGroup))]
-        public object[] Items
-        {
-            get { return itemsField; }
-            set { itemsField = value; }
-        }
+        public object[] Items { get; set; }
 
         /// <remarks/>
         [XmlAttribute()]
-        public decimal ToolsVersion
-        {
-            get { return toolsVersionField; }
-            set { toolsVersionField = value; }
-        }
+        public decimal ToolsVersion { get; set; }
 
         /// <remarks/>
         [XmlAttribute()]
-        public string DefaultTargets
-        {
-            get { return defaultTargetsField; }
-            set { defaultTargetsField = value; }
-        }
+        public string DefaultTargets { get; set; }
 
         [XmlIgnore]
         public List<VisualStudioProject> Projects 
@@ -67,718 +51,204 @@ namespace Visyn.Build.Wix
 
     /// <remarks/>
     [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
-    public partial class ProjectImport
+    public class ProjectImport
     {
-        private string projectField;
-
         /// <remarks/>
         [XmlAttribute()]
-        public string Project
-        {
-            get
-            {
-                return projectField;
-            }
-            set
-            {
-                projectField = value;
-            }
-        }
+        public string Project { get; set; }
     }
 
     /// <remarks/>
     [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
-    public partial class ProjectItemGroup
+    public class ProjectItemGroup
     {
-
-        private ProjectItemGroupProjectReference[] projectReferenceField;
-
-        private ProjectItemGroupWixExtension[] wixExtensionField;
-
-        private ProjectItemGroupContent[] contentField;
-
-        private ProjectItemGroupFolder folderField;
-
-        private ProjectItemGroupCompile[] compileField;
-
         /// <remarks/>
         [XmlElement("ProjectReference")]
-        public ProjectItemGroupProjectReference[] ProjectReference
-        {
-            get
-            {
-                return projectReferenceField;
-            }
-            set
-            {
-                projectReferenceField = value;
-            }
-        }
+        public ProjectItemGroupProjectReference[] ProjectReference { get; set; }
 
         /// <remarks/>
         [XmlElement("WixExtension")]
-        public ProjectItemGroupWixExtension[] WixExtension
-        {
-            get
-            {
-                return wixExtensionField;
-            }
-            set
-            {
-                wixExtensionField = value;
-            }
-        }
+        public ProjectItemGroupWixExtension[] WixExtension { get; set; }
 
         /// <remarks/>
         [XmlElement("Content")]
-        public ProjectItemGroupContent[] Content
-        {
-            get
-            {
-                return contentField;
-            }
-            set
-            {
-                contentField = value;
-            }
-        }
+        public ProjectItemGroupContent[] Content { get; set; }
 
         /// <remarks/>
-        public ProjectItemGroupFolder Folder
-        {
-            get
-            {
-                return folderField;
-            }
-            set
-            {
-                folderField = value;
-            }
-        }
+        public ProjectItemGroupFolder Folder { get; set; }
 
         /// <remarks/>
         [XmlElement("Compile")]
-        public ProjectItemGroupCompile[] Compile
-        {
-            get
-            {
-                return compileField;
-            }
-            set
-            {
-                compileField = value;
-            }
-        }
+        public ProjectItemGroupCompile[] Compile { get; set; }
     }
 
     /// <remarks/>
     [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
-    public partial class ProjectItemGroupProjectReference
+    public class ProjectItemGroupProjectReference
     {
-
-        private string nameField;
-
-        private string projectField;
-
-        private string privateField;
-
-        private string doNotHarvestField;
-
-        private string refProjectOutputGroupsField;
-
-        private string refTargetDirField;
-
-        private bool referenceOutputAssemblyField;
-
-        private bool referenceOutputAssemblyFieldSpecified;
-
-        private string includeField;
+        /// <remarks/>
+        public string Name { get; set; }
 
         /// <remarks/>
-        public string Name
-        {
-            get
-            {
-                return nameField;
-            }
-            set
-            {
-                nameField = value;
-            }
-        }
+        public string Project { get; set; }
 
         /// <remarks/>
-        public string Project
-        {
-            get
-            {
-                return projectField;
-            }
-            set
-            {
-                projectField = value;
-            }
-        }
+        public string Private { get; set; }
 
         /// <remarks/>
-        public string Private
-        {
-            get
-            {
-                return privateField;
-            }
-            set
-            {
-                privateField = value;
-            }
-        }
+        public string DoNotHarvest { get; set; }
 
         /// <remarks/>
-        public string DoNotHarvest
-        {
-            get
-            {
-                return doNotHarvestField;
-            }
-            set
-            {
-                doNotHarvestField = value;
-            }
-        }
+        public string RefProjectOutputGroups { get; set; }
 
         /// <remarks/>
-        public string RefProjectOutputGroups
-        {
-            get
-            {
-                return refProjectOutputGroupsField;
-            }
-            set
-            {
-                refProjectOutputGroupsField = value;
-            }
-        }
+        public string RefTargetDir { get; set; }
 
         /// <remarks/>
-        public string RefTargetDir
-        {
-            get
-            {
-                return refTargetDirField;
-            }
-            set
-            {
-                refTargetDirField = value;
-            }
-        }
-
-        /// <remarks/>
-        public bool ReferenceOutputAssembly
-        {
-            get
-            {
-                return referenceOutputAssemblyField;
-            }
-            set
-            {
-                referenceOutputAssemblyField = value;
-            }
-        }
+        public bool ReferenceOutputAssembly { get; set; }
 
         /// <remarks/>
         [XmlIgnore()]
-        public bool ReferenceOutputAssemblySpecified
-        {
-            get
-            {
-                return referenceOutputAssemblyFieldSpecified;
-            }
-            set
-            {
-                referenceOutputAssemblyFieldSpecified = value;
-            }
-        }
+        public bool ReferenceOutputAssemblySpecified { get; set; }
 
         /// <remarks/>
         [XmlAttribute()]
-        public string Include
-        {
-            get
-            {
-                return includeField;
-            }
-            set
-            {
-                includeField = value;
-            }
-        }
+        public string Include { get; set; }
     }
 
     /// <remarks/>
     [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
-    public partial class ProjectItemGroupWixExtension
+    public class ProjectItemGroupWixExtension
     {
-
-        private string hintPathField;
-
-        private string nameField;
-
-        private string includeField;
+        /// <remarks/>
+        public string HintPath { get; set; }
 
         /// <remarks/>
-        public string HintPath
-        {
-            get
-            {
-                return hintPathField;
-            }
-            set
-            {
-                hintPathField = value;
-            }
-        }
-
-        /// <remarks/>
-        public string Name
-        {
-            get
-            {
-                return nameField;
-            }
-            set
-            {
-                nameField = value;
-            }
-        }
+        public string Name { get; set; }
 
         /// <remarks/>
         [XmlAttribute()]
-        public string Include
-        {
-            get
-            {
-                return includeField;
-            }
-            set
-            {
-                includeField = value;
-            }
-        }
+        public string Include { get; set; }
     }
 
     /// <remarks/>
     [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
-    public partial class ProjectItemGroupContent
+    public class ProjectItemGroupContent
     {
-
-        private string includeField;
-
         /// <remarks/>
         [XmlAttribute()]
-        public string Include
-        {
-            get
-            {
-                return includeField;
-            }
-            set
-            {
-                includeField = value;
-            }
-        }
+        public string Include { get; set; }
     }
 
     /// <remarks/>
     [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
-    public partial class ProjectItemGroupFolder
+    public class ProjectItemGroupFolder
     {
-
-        private string includeField;
-
         /// <remarks/>
         [XmlAttribute()]
-        public string Include
-        {
-            get
-            {
-                return includeField;
-            }
-            set
-            {
-                includeField = value;
-            }
-        }
+        public string Include { get; set; }
     }
 
     /// <remarks/>
     [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
-    public partial class ProjectItemGroupCompile
+    public class ProjectItemGroupCompile
     {
-
-        private string includeField;
-
         /// <remarks/>
         [XmlAttribute()]
-        public string Include
-        {
-            get
-            {
-                return includeField;
-            }
-            set
-            {
-                includeField = value;
-            }
-        }
+        public string Include { get; set; }
     }
 
     /// <remarks/>
     [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
-    public partial class ProjectPropertyGroup
+    public class ProjectPropertyGroup
     {
-
-        private string preBuildEventField;
-
-        private string outputPathField;
-
-        private string intermediateOutputPathField;
-
-        private string defineConstantsField;
-
-        private ProjectPropertyGroupConfiguration configurationField;
-
-        private ProjectPropertyGroupPlatform platformField;
-
-        private decimal productVersionField;
-
-        private bool productVersionFieldSpecified;
-
-        private string projectGuidField;
-
-        private decimal schemaVersionField;
-
-        private bool schemaVersionFieldSpecified;
-
-        private string outputNameField;
-
-        private string outputTypeField;
-
-        private ProjectPropertyGroupWixTargetsPath[] wixTargetsPathField;
-
-        private string conditionField;
+        /// <remarks/>
+        public string PreBuildEvent { get; set; }
 
         /// <remarks/>
-        public string PreBuildEvent
-        {
-            get
-            {
-                return preBuildEventField;
-            }
-            set
-            {
-                preBuildEventField = value;
-            }
-        }
+        public string OutputPath { get; set; }
 
         /// <remarks/>
-        public string OutputPath
-        {
-            get
-            {
-                return outputPathField;
-            }
-            set
-            {
-                outputPathField = value;
-            }
-        }
+        public string IntermediateOutputPath { get; set; }
 
         /// <remarks/>
-        public string IntermediateOutputPath
-        {
-            get
-            {
-                return intermediateOutputPathField;
-            }
-            set
-            {
-                intermediateOutputPathField = value;
-            }
-        }
+        public string DefineConstants { get; set; }
 
         /// <remarks/>
-        public string DefineConstants
-        {
-            get
-            {
-                return defineConstantsField;
-            }
-            set
-            {
-                defineConstantsField = value;
-            }
-        }
+        public ProjectPropertyGroupConfiguration Configuration { get; set; }
 
         /// <remarks/>
-        public ProjectPropertyGroupConfiguration Configuration
-        {
-            get
-            {
-                return configurationField;
-            }
-            set
-            {
-                configurationField = value;
-            }
-        }
+        public ProjectPropertyGroupPlatform Platform { get; set; }
 
         /// <remarks/>
-        public ProjectPropertyGroupPlatform Platform
-        {
-            get
-            {
-                return platformField;
-            }
-            set
-            {
-                platformField = value;
-            }
-        }
-
-        /// <remarks/>
-        public decimal ProductVersion
-        {
-            get
-            {
-                return productVersionField;
-            }
-            set
-            {
-                productVersionField = value;
-            }
-        }
+        public decimal ProductVersion { get; set; }
 
         /// <remarks/>
         [XmlIgnore()]
-        public bool ProductVersionSpecified
-        {
-            get
-            {
-                return productVersionFieldSpecified;
-            }
-            set
-            {
-                productVersionFieldSpecified = value;
-            }
-        }
+        public bool ProductVersionSpecified { get; set; }
 
         /// <remarks/>
-        public string ProjectGuid
-        {
-            get
-            {
-                return projectGuidField;
-            }
-            set
-            {
-                projectGuidField = value;
-            }
-        }
+        public string ProjectGuid { get; set; }
 
         /// <remarks/>
-        public decimal SchemaVersion
-        {
-            get
-            {
-                return schemaVersionField;
-            }
-            set
-            {
-                schemaVersionField = value;
-            }
-        }
+        public decimal SchemaVersion { get; set; }
 
         /// <remarks/>
         [XmlIgnore()]
-        public bool SchemaVersionSpecified
-        {
-            get
-            {
-                return schemaVersionFieldSpecified;
-            }
-            set
-            {
-                schemaVersionFieldSpecified = value;
-            }
-        }
+        public bool SchemaVersionSpecified { get; set; }
 
         /// <remarks/>
-        public string OutputName
-        {
-            get
-            {
-                return outputNameField;
-            }
-            set
-            {
-                outputNameField = value;
-            }
-        }
+        public string OutputName { get; set; }
 
         /// <remarks/>
-        public string OutputType
-        {
-            get
-            {
-                return outputTypeField;
-            }
-            set
-            {
-                outputTypeField = value;
-            }
-        }
+        public string OutputType { get; set; }
 
         /// <remarks/>
         [XmlElement("WixTargetsPath")]
-        public ProjectPropertyGroupWixTargetsPath[] WixTargetsPath
-        {
-            get
-            {
-                return wixTargetsPathField;
-            }
-            set
-            {
-                wixTargetsPathField = value;
-            }
-        }
+        public ProjectPropertyGroupWixTargetsPath[] WixTargetsPath { get; set; }
 
         /// <remarks/>
         [XmlAttribute()]
-        public string Condition
-        {
-            get
-            {
-                return conditionField;
-            }
-            set
-            {
-                conditionField = value;
-            }
-        }
+        public string Condition { get; set; }
     }
 
     /// <remarks/>
     [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
-    public partial class ProjectPropertyGroupConfiguration
+    public class ProjectPropertyGroupConfiguration
     {
-
-        private string conditionField;
-
-        private string valueField;
-
         /// <remarks/>
         [XmlAttribute()]
-        public string Condition
-        {
-            get
-            {
-                return conditionField;
-            }
-            set
-            {
-                conditionField = value;
-            }
-        }
+        public string Condition { get; set; }
 
         /// <remarks/>
         [XmlText()]
-        public string Value
-        {
-            get
-            {
-                return valueField;
-            }
-            set
-            {
-                valueField = value;
-            }
-        }
+        public string Value { get; set; }
     }
 
     /// <remarks/>
     [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
-    public partial class ProjectPropertyGroupPlatform
+    public class ProjectPropertyGroupPlatform
     {
-
-        private string conditionField;
-
-        private string valueField;
-
         /// <remarks/>
         [XmlAttribute()]
-        public string Condition
-        {
-            get
-            {
-                return conditionField;
-            }
-            set
-            {
-                conditionField = value;
-            }
-        }
+        public string Condition { get; set; }
 
         /// <remarks/>
         [XmlText()]
-        public string Value
-        {
-            get
-            {
-                return valueField;
-            }
-            set
-            {
-                valueField = value;
-            }
-        }
+        public string Value { get; set; }
     }
 
     /// <remarks/>
     [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
-    public partial class ProjectPropertyGroupWixTargetsPath
+    public class ProjectPropertyGroupWixTargetsPath
     {
-
-        private string conditionField;
-
-        private string valueField;
-
         /// <remarks/>
         [XmlAttribute()]
-        public string Condition
-        {
-            get
-            {
-                return conditionField;
-            }
-            set
-            {
-                conditionField = value;
-            }
-        }
+        public string Condition { get; set; }
 
         /// <remarks/>
         [XmlText()]
-        public string Value
-        {
-            get
-            {
-                return valueField;
-            }
-            set
-            {
-                valueField = value;
-            }
-        }
+        public string Value { get; set; }
     }
 
 
