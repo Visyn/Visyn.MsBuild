@@ -14,7 +14,7 @@
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <AssemblyVersion>1.0.0.129</AssemblyVersion>
+    <AssemblyVersion>1.0.0.152</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -74,17 +74,40 @@
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="VisualStudio.CsProj\Import.cs" />
     <Compile Include="VisualStudio.CsProj\ItemGroup.cs" />
     <Compile Include="ProjectFileBase.cs" />
     <Compile Include="VisualStudio.CsProj\PropertyGroup.cs" />
     <Compile Include="ResourceType.cs" />
     <Compile Include="VisualStudio.CsProj\VisualStudioCsProject.cs" />
-    <Compile Include="VisualStudioProjectFile.cs" />
+    <Compile Include="ProjectFile.cs" />
     <Compile Include="VisualStudio.CsProj\VsAssemblyInfo.cs" />
     <Compile Include="VisualStudio.msbuild\MsBuild.cs" />
     <Compile Include="VisualStudio.sln\VisualStudioSolution.cs" />
-    <Compile Include="VisualStudioProject.cs" />
+    <Compile Include="NestedProject.cs" />
+    <Compile Include="VisualStudio.VCxProj\ItemsChoiceType.cs" />
+    <Compile Include="VisualStudio.VCxProj\ItemsChoiceType1.cs" />
+    <Compile Include="VisualStudio.VCxProj\ItemsChoiceType2.cs" />
+    <Compile Include="VisualStudio.VCxProj\Import.cs" />
+    <Compile Include="VisualStudio.VCxProj\ImportGroup.cs" />
+    <Compile Include="VisualStudio.VCxProj\ProjectImportGroupImport.cs" />
+    <Compile Include="VisualStudio.VCxProj\ItemDefinitionGroup.cs" />
+    <Compile Include="VisualStudio.VCxProj\ProjectItemDefinitionGroupBscmake.cs" />
+    <Compile Include="VisualStudio.VCxProj\ProjectItemDefinitionGroupClCompile.cs" />
+    <Compile Include="VisualStudio.VCxProj\ProjectItemDefinitionGroupLink.cs" />
+    <Compile Include="VisualStudio.VCxProj\ProjectItemDefinitionGroupMidl.cs" />
+    <Compile Include="VisualStudio.VCxProj\ProjectItemDefinitionGroupResourceCompile.cs" />
+    <Compile Include="VisualStudio.VCxProj\ItemGroup.cs" />
+    <Compile Include="VisualStudio.VCxProj\ProjectItemGroupClCompile.cs" />
+    <Compile Include="VisualStudio.VCxProj\ProjectItemGroupClCompileAdditionalIncludeDirectories.cs" />
+    <Compile Include="VisualStudio.VCxProj\ProjectItemGroupClCompilePreprocessorDefinitions.cs" />
+    <Compile Include="VisualStudio.VCxProj\ClInclude.cs" />
+    <Compile Include="VisualStudio.VCxProj\ProjectItemGroupProjectConfiguration.cs" />
+    <Compile Include="VisualStudio.VCxProj\PropertyGroup.cs" />
+    <Compile Include="VisualStudio.VCxProj\ConditionValue.cs" />
+    <Compile Include="VisualStudio.VCxProj\VisualStudioVCxProject.cs" />
+    <Compile Include="VisualStudio\VisualStudioProject.cs" />
     <Compile Include="Wix\WixProject.cs" />
     <Compile Include="Wix\WixProjectXml.cs" />
     <Compile Include="App.xaml.cs">

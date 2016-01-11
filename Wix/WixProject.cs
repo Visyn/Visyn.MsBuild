@@ -68,9 +68,9 @@ namespace Visyn.Build.Wix
             {
                 var itemGroup = item as ProjectItemGroup;
                 if (itemGroup?.ProjectReference == null) continue;
-                foreach (var reference in itemGroup.ProjectReference.Where(VisualStudioProject.IsValidProjectReference))
+                foreach (var reference in itemGroup.ProjectReference.Where(NestedProject.IsValidProjectReference))
                 {
-                    VisualStudioProjects.Add(new VisualStudioProject(reference, ProjectPath));
+                    Projects.Add(new NestedProject(reference, ProjectPath));
                 }
             }
             base.Analyze(fileName,exceptionHandler);

@@ -12,9 +12,9 @@ namespace Visyn.Build.VisualStudio.sln
         public override string FileType => "Visual Studio Solution";
         private string _visualStudioVersion;
         private string _minimumVisualStudioVersion;
-        public string FileVersion { get; }
+        public double FileVersion { get; }
 
-        public VisualStudioSolution(string filename, string fileVersion)
+        public VisualStudioSolution(string filename, double fileVersion)
         {
             ProjectFilename = filename;
             FileVersion = fileVersion;
@@ -27,10 +27,10 @@ namespace Visyn.Build.VisualStudio.sln
 
         public static VisualStudioSolution Deserialize(string filename, Action<object, Exception> exceptionHandler)
         {
-            if (!System.IO.File.Exists(filename)) return null;
+            if (!File.Exists(filename)) return null;
             var lines = File.ReadAllLines(filename);
             List<string> body;
-            string fileVersion;
+            double fileVersion;
             if( FindSolutionHeader(lines, out body, out fileVersion))
             {
                 var solution = new VisualStudioSolution(filename,fileVersion);
@@ -43,17 +43,24 @@ namespace Visyn.Build.VisualStudio.sln
 
         private bool Parse(List<string> body, Action<object, Exception> exceptionHandler)
         {
-            if (!ScanUntilKeyValuePair(ref body, "VisualStudioVersion", out _visualStudioVersion, exceptionHandler))return false;
-            if (string.IsNullOrWhiteSpace(VisualStudioVersion)) FileFormatException(exceptionHandler,$"Field VisualStudioVersion missing!");
-            if (!ScanUntilKeyValuePair(ref body, "MinimumVisualStudioVersion", out _minimumVisualStudioVersion, exceptionHandler)) return false;
-            if (string.IsNullOrWhiteSpace(MinimumVisualStudioVersion)) FileFormatException(exceptionHandler, $"Field MinimumVisualStudioVersion missing!");
+            RemoveComments(body, "#");
+            if (FileVersion > 11)
+            {
+                if (!ScanUntilKeyValuePair(ref body, "VisualStudioVersion", out _visualStudioVersion, exceptionHandler))
+                    return false;
+                if (string.IsNullOrWhiteSpace(VisualStudioVersion))
+                    FileFormatException(exceptionHandler, $"Field VisualStudioVersion missing!");
+                if (!ScanUntilKeyValuePair(ref body, "MinimumVisualStudioVersion", out _minimumVisualStudioVersion,exceptionHandler))
+                    return false;
+                if (string.IsNullOrWhiteSpace(MinimumVisualStudioVersion))
+                    FileFormatException(exceptionHandler, $"Field MinimumVisualStudioVersion missing!");
+            }
             while (ParseSection(body, exceptionHandler))
             {
 
             }
             return true;
         }
-
 
 
         private bool ParseSection(List<string> body, Action<object, Exception> exceptionHandler)
@@ -79,7 +86,7 @@ namespace Visyn.Build.VisualStudio.sln
                         FileFormatException(exceptionHandler, $"Project entry mal-formed '{line}'. Entry should have 3 ',' delimited items");
                         return false;
                     }
-                    VisualStudioProjects.Add(project);
+                    Projects.Add(project);
                     var projectBody = ExtractLinesUntil(body, "EndProject", exceptionHandler);
                     return projectBody != null;
                 }
@@ -111,14 +118,14 @@ namespace Visyn.Build.VisualStudio.sln
             return null;
         }
 
-        private VisualStudioProject CreateVisualStudioProject(string value)
+        private NestedProject CreateVisualStudioProject(string value)
         {
             char[] trimChars = {'"','\\'};
             char[] guidTrimChars = { '{','}' };
             var split = value.Split(',');
             if (split.Length != 3) return null;
             
-            var project = new VisualStudioProject(split[1].Trim().Trim('"').Trim('\\'),ProjectPath)
+            var project = new NestedProject(split[1].Trim().Trim('"').Trim('\\'),ProjectPath)
             {
                 Name = split[0].Trim().Trim('"').Trim('\\'),
                 Guid = split[2].Trim().Trim('"').Trim('\\').Trim(guidTrimChars)
@@ -132,6 +139,7 @@ namespace Visyn.Build.VisualStudio.sln
             {
                 var line = lines.First().Trim();
                 lines.RemoveAt(0);
+                if(line.Trim().StartsWith("#")) continue;
                 if (!line.StartsWith(key)) continue;
                 KeyValuePair<string, string> kvp;
                 if (!line.TrySplitKeyValuePair(new[] {'='}, out kvp)) continue;
@@ -157,11 +165,11 @@ namespace Visyn.Build.VisualStudio.sln
 
 
 
-        private static bool FindSolutionHeader(IEnumerable<string> lines, out List<string> body, out string fileVersion)
+        private static bool FindSolutionHeader(IEnumerable<string> lines, out List<string> body, out double fileVersion)
         {
             body = new List<string>();
             var headerFound = false;
-            fileVersion = null;
+            fileVersion = 0;
             foreach(var line in lines)
             {
                 if(headerFound == false)
@@ -169,7 +177,8 @@ namespace Visyn.Build.VisualStudio.sln
                     if (!line.StartsWith("Microsoft Visual Studio Solution File")) continue;
                     KeyValuePair<string,string> kvp;
                     if (!line.TrySplitKeyValuePair(new[] {','}, out kvp)) continue;
-                    fileVersion = kvp.Value;
+                    var split = kvp.Value.Trim().Split(' ');
+                    double.TryParse(split.Last(),out fileVersion);
                     headerFound = true;
                 }
                 else
