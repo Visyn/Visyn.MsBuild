@@ -23,7 +23,7 @@ namespace Visyn.Build.VisualStudio.CsProj
             return $"{Name} {Version}";
         }
 
-        public static VsAssemblyInfo CreateIfValid(ProjectItemGroupReference reference)
+        public static VsAssemblyInfo CreateIfValid(Reference reference)
         {
             try
             {

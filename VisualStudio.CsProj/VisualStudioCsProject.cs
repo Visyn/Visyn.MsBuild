@@ -23,13 +23,6 @@ namespace Visyn.Build.VisualStudio.CsProj
         [XmlElement("PropertyGroup", typeof(PropertyGroup))]
         public object[] Items { get; set; }
 
-        /// <remarks/>
-        [XmlAttribute()]
-        public decimal ToolsVersion { get; set; }
-
-        /// <remarks/>
-        [XmlAttribute()]
-        public string DefaultTargets { get; set; }
   
         [XmlIgnore]
         public List<VsAssemblyInfo> Assemblies { get; private set; } = new List<VsAssemblyInfo>();

@@ -1,15 +1,15 @@
 using System.Xml.Serialization;
 
-namespace Visyn.Build.VisualStudio.VCxProj
+namespace Visyn.Build.VisualStudio.CsProj
 {
     /// <remarks/>
     [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
-    public class ProjectItemDefinitionGroupBscmake
+    public class ProjectItemGroupPage : ProjectItemGroup
     {
         /// <remarks/>
-        public bool SuppressStartupBanner { get; set; }
+        public string SubType { get; set; }
 
         /// <remarks/>
-        public string OutputFile { get; set; }
+        public string Generator { get; set; }
     }
 }

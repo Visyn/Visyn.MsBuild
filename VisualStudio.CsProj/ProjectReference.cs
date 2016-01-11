@@ -1,15 +1,15 @@
 using System.Xml.Serialization;
 
-namespace Visyn.Build.VisualStudio.VCxProj
+namespace Visyn.Build.VisualStudio.CsProj
 {
     /// <remarks/>
     [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
-    public class ProjectItemDefinitionGroupMidl
+    public class ProjectReference : ProjectItemGroup
     {
         /// <remarks/>
-        public string TypeLibraryName { get; set; }
+        public string Project { get; set; }
 
         /// <remarks/>
-        public object HeaderFileName { get; set; }
+        public string Name { get; set; }
     }
 }

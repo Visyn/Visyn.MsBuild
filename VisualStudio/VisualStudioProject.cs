@@ -7,6 +7,13 @@ namespace Visyn.Build.VisualStudio
 {
     public abstract class VisualStudioProject : ProjectFileBase
     {
+        [XmlAttribute()]
+        public string DefaultTargets { get; set; }
+
+        /// <remarks/>
+        [XmlAttribute()]
+        public decimal ToolsVersion { get; set; }
+
         [XmlIgnore]
         public List<string> Dependencies
         {

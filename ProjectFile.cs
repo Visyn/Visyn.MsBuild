@@ -28,7 +28,7 @@ namespace Visyn.Build
         public static ProjectFile CreateIfValid(ProjectItemGroup item, ResourceType resourceType, string projectPath)
         {
             return !string.IsNullOrWhiteSpace(item?.Include) ? 
-                new ProjectFile(item.Include, resourceType, projectPath) { Dependancy = (item as ProjectItemGroupCompile)?.DependentUpon } :
+                new ProjectFile(item.Include, resourceType, projectPath) { Dependancy = (item as Compile)?.DependentUpon } :
                 null;
         }
     }

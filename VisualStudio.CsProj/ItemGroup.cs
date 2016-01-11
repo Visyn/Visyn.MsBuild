@@ -32,15 +32,15 @@ namespace Visyn.Build.VisualStudio.CsProj
 
         /// <remarks/>
         [XmlElement("ProjectReference")]
-        public ProjectItemGroupProjectReference[] ProjectReference { get; set; }
+        public ProjectReference[] ProjectReference { get; set; }
 
         /// <remarks/>
         [XmlElement("Compile")]
-        public ProjectItemGroupCompile[] Compile { get; set; }
+        public Compile[] Compile { get; set; }
 
         /// <remarks/>
         [XmlElement("Reference")]
-        public ProjectItemGroupReference[] Reference { get; set; }
+        public Reference[] Reference { get; set; }
 
 
         public List<ProjectFile> SourceFiles(string projectPath)
@@ -48,7 +48,6 @@ namespace Visyn.Build.VisualStudio.CsProj
             var files = ExtractSourceFiles(Compile, ResourceType.SourceFile,projectPath);
             files.AddRange(ExtractSourceFiles(EmbeddedResource, ResourceType.EmbeddedResource, projectPath));
             files.AddRange(ExtractSourceFiles(Resource, ResourceType.Resource, projectPath));
-
 
             files.AddRange(ExtractSourceFiles(ProjectReference, ResourceType.ProjectReference, projectPath));
 
@@ -82,86 +81,4 @@ namespace Visyn.Build.VisualStudio.CsProj
             return files;
         }
     }
-
-    /// <remarks/>
-    [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
-    public class ProjectItemGroup
-    {
-        /// <remarks/>
-        [XmlAttribute()]
-        public string Include { get; set; }
-    }
-
-    /// <remarks/>
-    [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
-    public class EmbeddedResource : ProjectItemGroup
-    {
-        /// <remarks/>
-        public string Generator { get; set; }
-
-        /// <remarks/>
-        public string LastGenOutput { get; set; }
-
-        /// <remarks/>
-        public string SubType { get; set; }
-    }
-
-    /// <remarks/>
-    [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
-    public class ProjectItemGroupApplicationDefinition : ProjectItemGroup
-    {
-        /// <remarks/>
-        public string Generator { get; set; }
-
-        /// <remarks/>
-        public string SubType { get; set; }
-    }
-
-    /// <remarks/>
-    [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
-    public class ProjectItemGroupPage : ProjectItemGroup
-    {
-        /// <remarks/>
-        public string SubType { get; set; }
-
-        /// <remarks/>
-        public string Generator { get; set; }
-    }
-
-    /// <remarks/>
-    [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
-    public class ProjectItemGroupProjectReference : ProjectItemGroup
-    {
-        /// <remarks/>
-        public string Project { get; set; }
-
-        /// <remarks/>
-        public string Name { get; set; }
-    }
-
-    /// <remarks/>
-    [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
-    public class ProjectItemGroupCompile : ProjectItemGroup
-    {
-        /// <remarks/>
-        public string AutoGen { get; set; }
-
-        /// <remarks/>
-        public string DesignTime { get; set; }
-
-        /// <remarks/>
-        public string DependentUpon { get; set; }
-    }
-
-    /// <remarks/>
-    [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
-    public class ProjectItemGroupReference : ProjectItemGroup
-    {
-        /// <remarks/>
-        public string HintPath { get; set; }
-
-        /// <remarks/>
-        public string Private { get; set; }
-    }
-
 }

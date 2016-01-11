@@ -7,19 +7,19 @@ namespace Visyn.Build.VisualStudio.VCxProj
     public class ItemDefinitionGroup
     {
         /// <remarks/>
-        public ProjectItemDefinitionGroupMidl Midl { get; set; }
+        public Midl Midl { get; set; }
 
         /// <remarks/>
         public ProjectItemDefinitionGroupClCompile ClCompile { get; set; }
 
         /// <remarks/>
-        public ProjectItemDefinitionGroupResourceCompile ResourceCompile { get; set; }
+        public ResourceCompile ResourceCompile { get; set; }
 
         /// <remarks/>
-        public ProjectItemDefinitionGroupLink Link { get; set; }
+        public Link Link { get; set; }
 
         /// <remarks/>
-        public ProjectItemDefinitionGroupBscmake Bscmake { get; set; }
+        public Bscmake Bscmake { get; set; }
 
         /// <remarks/>
         [XmlAttribute()]
