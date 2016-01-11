@@ -16,6 +16,7 @@
         </Grid.ColumnDefinitions>
 
         <dxb:MainMenuControl Grid.ColumnSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0" >
+            <dxb:BarButtonItem x:Name="compareMenu" Content="Compare" ItemClick="compareMenuItem_ItemClick" IsEnabled="{Binding SolutionLoaded, ElementName=window}"/>
             <dxb:BarButtonItem x:Name="openMenuItem" Content="Open" ItemClick="openMenuItem_ItemClick"/>
             <dxb:BarButtonItem x:Name="compareMenu" Content="Compare" ItemClick="compareMenuItem_ItemClick" IsEnabled="{Binding SolutionLoaded, ElementName=window}"/>
             <dxb:BarCheckItem Content="Verbose" IsChecked="{Binding Verbose, ElementName=window}" />
