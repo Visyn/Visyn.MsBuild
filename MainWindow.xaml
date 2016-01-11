@@ -3,10 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Visyn.Build"
         xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars" 
         xmlns:term="clr-namespace:ProtoLib.Wpf.Controls.Terminal;assembly=ProtoLib.Wpf"
         mc:Ignorable="d"
+        xmlns:local="clr-namespace:Visyn.Build"
         Title="Visyn.Build" Height="350" Width="525">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -16,8 +16,8 @@
         </Grid.ColumnDefinitions>
 
         <dxb:MainMenuControl Grid.ColumnSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0" >
-            <dxb:BarButtonItem x:Name="compareMenu" Content="Compare" ItemClick="compareMenuItem_ItemClick" IsEnabled="{Binding SolutionLoaded, ElementName=window}"/>
             <dxb:BarButtonItem x:Name="openMenuItem" Content="Open" ItemClick="openMenuItem_ItemClick"/>
+            <dxb:BarButtonItem x:Name="compareMenu" Content="Compare" ItemClick="compareMenuItem_ItemClick" IsEnabled="{Binding SolutionLoaded, ElementName=window}"/>
             <dxb:BarCheckItem Content="Verbose" IsChecked="{Binding Verbose, ElementName=window}" />
             <dxb:BarCheckItem Content="Recurse" IsChecked="{Binding Recurse, ElementName=window}" />
             <dxb:BarCheckItem Content="Summary" IsChecked="{Binding Summary, ElementName=window}" />
