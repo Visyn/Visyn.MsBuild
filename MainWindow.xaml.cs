@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
+using DevExpress.Xpf.Bars;
 using Microsoft.Win32;
+using Visyn.Build.Annotations;
+using Visyn.Build.VisualStudio;
 using Visyn.Build.VisualStudio.CsProj;
 using Visyn.Build.VisualStudio.MsBuild;
 using Visyn.Build.VisualStudio.sln;
+using Visyn.Build.VisualStudio.VCxProj;
 using Visyn.Build.Wix;
 
 namespace Visyn.Build
@@ -12,8 +18,10 @@ namespace Visyn.Build
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        private List<VisualStudioProject> _visualStudioProjects = new List<VisualStudioProject>();
+        private VisualStudioSolution _visualStudioSolution;
         public bool Verbose { get; set; } = false;
         public bool Recurse { get; set; } = true;
 
@@ -21,10 +29,32 @@ namespace Visyn.Build
 
         MsBuildProject MsBuildProject { get; set; }
         WixProject WixProject { get; set; }
-        List<VisualStudioCsProject> VisualStudioProjects { get; set; } = new List<VisualStudioCsProject>();
-        public VisualStudioSolution VisualStudioSolution { get; set; }
+
+        List<VisualStudioProject> VisualStudioProjects
+        {
+            get { return _visualStudioProjects; }
+            set
+            {
+                _visualStudioProjects = value;
+                RaisePropertyChangedEvent(nameof(VisualStudioProjects));
+            }
+        }
+
+        public VisualStudioSolution VisualStudioSolution
+        {
+            get { return _visualStudioSolution; }
+            set
+            {
+                _visualStudioSolution = value;
+                RaisePropertyChangedEvent(nameof(VisualStudioSolution));
+                RaisePropertyChangedEvent(nameof(SolutionLoaded));
+            }
+        }
+
         public List<ProjectFile> MissingFiles { get; set; } = new List<ProjectFile>();
-        List<VisualStudioProject> MissingProjects { get; } = new List<VisualStudioProject>();
+        List<NestedProject> MissingProjects { get; } = new List<NestedProject>();
+
+        public bool SolutionLoaded => VisualStudioSolution != null;
 
         public MainWindow()
         {
@@ -49,53 +79,78 @@ namespace Visyn.Build
             {
                 var filename = dialog.FileName;
                 MissingProjects.Clear();
-                OpenProject(filename);
+                MissingFiles.Clear();
+                OpenProject(filename,Recurse);
                 ShowSummary();
             }
         }
 
-        private void ShowSummary()
+        private void compareMenuItem_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if(Summary)
+            var dialog = new OpenFileDialog
             {
-                terminal.AppendLine("Missing Projects");
-                foreach(var missing in MissingProjects)
-                {
-                    terminal.AppendLine(missing.Path);
-                }
+                Filter = $"{MsBuildProject.FileFilter}|{WixProject.FileFilter}"
+            };
+            if(dialog.ShowDialog(this)== true)
+            {
+                var filename = dialog.FileName;
+                var project = OpenProject(filename,false);
+                if(project != null)
+                    ShowComparison(VisualStudioSolution, project);
+
             }
         }
 
-        private void OpenProject(string filename)
+        private void ShowComparison(VisualStudioSolution visualStudioSolution, ProjectFileBase project)
+        {
+            IEnumerable<string> result = visualStudioSolution.Compare(project);
+            foreach(var line in result)
+            {
+                terminal.AppendLine(line);
+            }
+        }
+
+
+        private ProjectFileBase OpenProject(string filename, bool recurse)
         {
             ProjectFileBase project=null;
             if (filename.EndsWith(".wixproj")) project = OpenWixProject(filename);
             else if (filename.EndsWith(".csproj")) project = OpenVisualStudioCsProject(filename);
+            else if (filename.EndsWith(".vcxproj")) project = OpenVisualStudioVCxProject(filename);
             else if (filename.EndsWith(".proj")) project = OpenMsBuildProject(filename);
             else if (filename.EndsWith(".sln")) project = OpenVisualStudioSolution(filename);
+            else ExceptionHandler(this,new Exception($"Un-registered file extension {System.IO.Path.GetExtension(filename)}"));
             if (project != null)
             {
                 MissingProjects.AddRange(project.MissingProjects);
                 MissingFiles.AddRange(project.MissingFiles);
-                if (Recurse)
+                if (recurse)
                 {
-                    foreach (var nested in project.VisualStudioProjects)
+                    foreach (var nested in project.Projects)
                     {
-                        OpenProject(nested.Path);
+                        OpenProject(nested.Path,recurse);
                     }
                 }
             }
+            return project;
         }
 
 
-        //private void RecurseProjects(List<VisualStudioProject> projects)
-        //{
-        //    if (!Recurse) return;
-        //    foreach (var project in projects)
-        //    {
-        //        OpenProject(project.Path);
-        //    }
-        //}
+
+        private void ShowSummary()
+        {
+            if (!Summary) return;
+            terminal.AppendLine($"Missing Projects: [{MissingProjects.Count}]");
+            foreach (var missing in MissingProjects)
+            {
+                terminal.AppendLine("\t" + missing.Path);
+            }
+            terminal.AppendLine($"Missing Files [{MissingFiles.Count}]");
+            foreach (var file in MissingFiles)
+            {
+                terminal.AppendLine("\t" + file.Path);
+            }
+        }
 
         private ProjectFileBase OpenVisualStudioSolution(string filename)
         {
@@ -154,6 +209,22 @@ namespace Visyn.Build
             return cSharpProject;
         }
 
+        private ProjectFileBase OpenVisualStudioVCxProject(string filename)
+        {
+            var cProject = VisualStudioVCxProject.Deserialize(filename, ExceptionHandler);
+            if (cProject != null)
+            {
+                DisplayResults(cProject);
+                if (cProject.ImportFailed) FileOpenFailed(cProject.FileType, filename);
+                VisualStudioProjects.Add(cProject);
+            }
+            else
+            {
+                FileOpenFailed("Visual Studio C/C++ Project", filename);
+            }
+            return cProject;
+        }
+
         private void DisplayResults(ProjectFileBase project)
         {
             var results = project.Results(Verbose);
@@ -166,6 +237,14 @@ namespace Visyn.Build
         private void FileOpenFailed(string filetype, string filename)
         {
             terminal.AppendLine($"Opening {filetype} failed! File: {filename}");
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void RaisePropertyChangedEvent([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

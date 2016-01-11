@@ -34,7 +34,7 @@ namespace Visyn.Build.VisualStudio.MsBuild
             foreach(var item in ItemGroup)
             {
                 var projectPath = item.Include.Replace("$(MSBuildProjectDirectory)", ".");
-                VisualStudioProjects.Add(new VisualStudioProject(projectPath, path));
+                Projects.Add(new NestedProject(projectPath, path));
             }
             base.Analyze(fileName,exceptionHandler);
         }

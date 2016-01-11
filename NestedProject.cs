@@ -3,7 +3,7 @@ using Visyn.Build.Wix;
 
 namespace Visyn.Build
 {
-    public class VisualStudioProject
+    public class NestedProject
     {
         public string Path { get; }
 
@@ -14,16 +14,15 @@ namespace Visyn.Build
         public bool FileExists => System.IO.File.Exists(this.Path);
         public string Guid { get; set; }
 
-        public VisualStudioProject(ProjectItemGroupProjectReference reference, string projectPath)
+        public NestedProject(ProjectItemGroupProjectReference reference, string projectPath)
         {
             Name = reference.Name;
             Include = reference.Include;
             Project = reference.Project;
             Path = System.IO.Path.GetFullPath(System.IO.Path.Combine(projectPath, Include));
-            //var abs = System.IO.Path.GetFullPath(Path);
         }
 
-        public VisualStudioProject(string item, string projectPath)
+        public NestedProject(string item, string projectPath)
         {
             Name = item;
             Path = System.IO.Path.GetFullPath(System.IO.Path.Combine(projectPath,item));

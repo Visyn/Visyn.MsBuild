@@ -11,7 +11,7 @@ namespace Visyn.Build.VisualStudio.CsProj
     [XmlRoot(Namespace = "http://schemas.microsoft.com/developer/msbuild/2003", 
         IsNullable = false, 
         ElementName = "Project")]
-    public class VisualStudioCsProject : ProjectFileBase
+    public class VisualStudioCsProject : VisualStudioProject
     {
         public static string FileFilter = "Visual Studio c# Project (*.csproj)|*.csproj";
 
@@ -37,25 +37,6 @@ namespace Visyn.Build.VisualStudio.CsProj
         [XmlIgnore]
         public List<VsAssemblyInfo> References { get; private set; } = new List<VsAssemblyInfo>();
 
-        private List<string> _dependancies;
-        [XmlIgnore]
-        public List<string> Dependencies
-        {
-            get
-            {
-                _dependancies = new List<string>();
-                foreach (var item in Resources)
-                {
-                    if (string.IsNullOrWhiteSpace(item.Dependancy)) continue;
-                    var dep = item.Dependancy.Trim();
-                    if(!_dependancies.Contains(dep)) _dependancies.Add(dep);
-                }
-                return _dependancies;
-            }
-        }
-
-        [XmlIgnore]
-        public List<ProjectFile> Resources { get; private set; } = new List<ProjectFile>();
 
         public override IEnumerable<string> Results(bool verbose)
         {
@@ -66,8 +47,8 @@ namespace Visyn.Build.VisualStudio.CsProj
                 result.AddRange(Assemblies.Select(assembly => '\t' + assembly.ToString()));
                 result.Add($"Referenced {References.Count} Assemblies");
                 result.AddRange(References.Select(assembly => '\t' + assembly.ToString()));
-                result.Add($"Source Files {Resources.Count}");
-                result.AddRange(Resources.Select(resource => '\t' + resource.ToString()));
+                result.Add($"Source Files {SourceFiles.Count}");
+                result.AddRange(SourceFiles.Select(resource => '\t' + resource.ToString()));
                 result.Add($"Dependancies {Dependencies.Count}");
                 result.AddRange(Dependencies.Select(dependancy => '\t' + dependancy));
                 result.Add($"Missing Files: {MissingFiles.Count}");
@@ -75,7 +56,7 @@ namespace Visyn.Build.VisualStudio.CsProj
             }
             else
             {
-                result.Add($"Files: {Resources.Count} Missing: {MissingFiles.Count} References: {References.Count}");
+                result.Add($"Files: {SourceFiles.Count} Missing: {MissingFiles.Count} References: {References.Count}");
             }
             return result;
         }
@@ -88,7 +69,7 @@ namespace Visyn.Build.VisualStudio.CsProj
             return project;
         }
 
-        private void Analyze(string fileName, Action<object, Exception> exceptionHandler)
+        protected override void Analyze(string fileName, Action<object, Exception> exceptionHandler)
         {
             ProjectFilename = fileName;
             var path = ProjectPath;
@@ -111,7 +92,7 @@ namespace Visyn.Build.VisualStudio.CsProj
                     {
                         if (itemGroup?.Reference != null)
                         {
-                            foreach (ProjectItemGroupReference reference in itemGroup.Reference)
+                            foreach (var reference in itemGroup.Reference)
                             {
                                 var r = VsAssemblyInfo.CreateIfValid(reference);
                                 if (r != null)
@@ -120,7 +101,7 @@ namespace Visyn.Build.VisualStudio.CsProj
                                 }
                             }
                         }
-                        Resources.AddRange(itemGroup.SourceFiles(path));
+                        SourceFiles.AddRange(itemGroup.SourceFiles(path));
                     }
                 }
                 catch (Exception exc)
@@ -129,9 +110,7 @@ namespace Visyn.Build.VisualStudio.CsProj
                     else throw;
                 }
             }
-
-
-            MissingFiles.AddRange(Resources.Where(resource => (!resource.FileExists && (resource.ResourceType != ResourceType.Reference))));
+            base.Analyze(fileName,exceptionHandler);
         }
     }
 }
