@@ -12,9 +12,5 @@ namespace Visyn.Build.VisualStudio.VCxProj
         /// <remarks/>
         [XmlElement("PreprocessorDefinitions")]
         public ConditionValue[] PreprocessorDefinitions { get; set; }
-
-        /// <remarks/>
-        //[XmlAttribute()]
-        //public string Include { get; set; }
     }
 }
