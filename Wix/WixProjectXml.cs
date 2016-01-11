@@ -28,6 +28,7 @@ namespace Visyn.Build.Wix
         public ProjectItemGroup[] Content { get; set; }
 
         /// <remarks/>
+        [XmlElement("Folder")]
         public ProjectItemGroupFolder Folder { get; set; }
 
         /// <remarks/>
@@ -83,15 +84,6 @@ namespace Visyn.Build.Wix
         [XmlAttribute()]
         public string Include { get; set; }
     }
-
-    /// <remarks/>
-    //[XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
-    //public class ProjectItemGroupContent
-    //{
-    //    /// <remarks/>
-    //    [XmlAttribute()]
-    //    public string Include { get; set; }
-    //}
 
     /// <remarks/>
     [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]

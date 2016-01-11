@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace Visyn.Build.VisualStudio
+namespace Visyn.Build.VisualStudio.CsProj
 {
     /// <remarks/>
     [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
@@ -90,7 +90,7 @@ namespace Visyn.Build.VisualStudio
         public string Condition { get; set; }
 
         /// <remarks/>
-        [XmlTextAttribute()]
+        [XmlText()]
         public string Value { get; set; }
     }
 
@@ -103,7 +103,7 @@ namespace Visyn.Build.VisualStudio
         public string Condition { get; set; }
 
         /// <remarks/>
-        [XmlTextAttribute()]
+        [XmlText()]
         public string Value { get; set; }
     }
 }

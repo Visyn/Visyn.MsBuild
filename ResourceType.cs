@@ -1,4 +1,4 @@
-namespace Visyn.Build.VisualStudio
+namespace Visyn.Build
 {
     public enum ResourceType
     {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace Visyn.Build.VisualStudio
+namespace Visyn.Build.VisualStudio.CsProj
 {
     /// <remarks/>
     [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
@@ -43,7 +43,7 @@ namespace Visyn.Build.VisualStudio
         public ProjectItemGroupReference[] Reference { get; set; }
 
 
-        public List<VisualStudioProjectFile> SourceFiles(string projectPath)
+        public List<ProjectFile> SourceFiles(string projectPath)
         {
             var files = ExtractSourceFiles(Compile, ResourceType.SourceFile,projectPath);
             files.AddRange(ExtractSourceFiles(EmbeddedResource, ResourceType.EmbeddedResource, projectPath));
@@ -63,13 +63,13 @@ namespace Visyn.Build.VisualStudio
 
 
 
-        private static List<VisualStudioProjectFile> ExtractSourceFiles(IEnumerable<ProjectItemGroup> items, ResourceType resourceType, string projectPath)
+        private static List<ProjectFile> ExtractSourceFiles(IEnumerable<ProjectItemGroup> items, ResourceType resourceType, string projectPath)
         {
-            var files = new List<VisualStudioProjectFile>();
+            var files = new List<ProjectFile>();
             if (items == null) return files;
             foreach (var item in items)
             {
-                var resource = VisualStudioProjectFile.CreateIfValid(item, resourceType, projectPath);
+                var resource = ProjectFile.CreateIfValid(item, resourceType, projectPath);
                 if (resource != null)
                 {
                     files.Add(resource);

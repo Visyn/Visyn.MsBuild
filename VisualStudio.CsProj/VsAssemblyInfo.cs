@@ -1,6 +1,6 @@
 using System;
 
-namespace Visyn.Build.VisualStudio
+namespace Visyn.Build.VisualStudio.CsProj
 {
     public class VsAssemblyInfo
     {

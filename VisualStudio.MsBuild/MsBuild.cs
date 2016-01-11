@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Xml.Serialization;
 using ProtoLib.Util.Xml;
 
 namespace Visyn.Build.VisualStudio.MsBuild
@@ -12,6 +11,7 @@ namespace Visyn.Build.VisualStudio.MsBuild
     public class MsBuildProject : ProjectFileBase
     {
         public static string FileFilter = "MsBuild Project (*.proj) |*.proj";
+        public override string FileType => "MsBuild Project";
         /// <remarks/>
         public ProjectPropertyGroup PropertyGroup { get; set; }
 
@@ -26,23 +26,17 @@ namespace Visyn.Build.VisualStudio.MsBuild
         [System.Xml.Serialization.XmlAttribute()]
         public string DefaultTargets { get; set; }
 
-        [XmlIgnore]
-        public List<VisualStudioProject> VisualStudioProjects { get; private set; } = new List<VisualStudioProject>();
-        [XmlIgnore]
-        public List<VisualStudioProject> MissingProjects { get; private set; } = new List<VisualStudioProject>();
-        private void Analyze(string fileName, Action<object, Exception> exceptionHandler)
+
+        protected override void Analyze(string fileName, Action<object, Exception> exceptionHandler)
         {
-            FileName = fileName;
-            var path = Path;
+            ProjectFilename = fileName;
+            var path = ProjectPath;
             foreach(var item in ItemGroup)
             {
                 var projectPath = item.Include.Replace("$(MSBuildProjectDirectory)", ".");
                 VisualStudioProjects.Add(new VisualStudioProject(projectPath, path));
             }
-            foreach(var project in VisualStudioProjects)
-            {
-                if(!project.FileExists) MissingProjects.Add(project);
-            }
+            base.Analyze(fileName,exceptionHandler);
         }
 
         public static MsBuildProject Deserialize(string fileName, Action<object, Exception> exceptionHandler)
@@ -51,6 +45,13 @@ namespace Visyn.Build.VisualStudio.MsBuild
             if (project == null) return null;
             project.Analyze(fileName, exceptionHandler);
             return project;
+        }
+
+        public override IEnumerable<string> Results(bool verbose)
+        {
+            var result = new List<string> {$"Opened {FileType} File: {ProjectFilename}"};
+            result.AddRange(base.Results(verbose));
+            return result;
         }
     }
 

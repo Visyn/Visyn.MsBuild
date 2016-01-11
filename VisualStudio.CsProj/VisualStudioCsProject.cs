@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
 using ProtoLib.Util.Xml;
-using System.Linq;
 
-namespace Visyn.Build.VisualStudio
+namespace Visyn.Build.VisualStudio.CsProj
 {
     /// <remarks/>
     [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
@@ -14,6 +14,8 @@ namespace Visyn.Build.VisualStudio
     public class VisualStudioCsProject : ProjectFileBase
     {
         public static string FileFilter = "Visual Studio c# Project (*.csproj)|*.csproj";
+
+        public override string FileType => "Visual Studio C# Project";
 
         /// <remarks/>
         [XmlElement("ProjectImport", typeof(Import))]
@@ -53,10 +55,30 @@ namespace Visyn.Build.VisualStudio
         }
 
         [XmlIgnore]
-        public List<VisualStudioProjectFile> Resources { get; private set; } = new List<VisualStudioProjectFile>();
+        public List<ProjectFile> Resources { get; private set; } = new List<ProjectFile>();
 
-        [XmlIgnore]
-        public List<VisualStudioProjectFile> MissingFiles { get; private set; } = new List<VisualStudioProjectFile>();
+        public override IEnumerable<string> Results(bool verbose)
+        {
+            var result = new List<string>() {$"Opened {FileType} File: {ProjectPath}"};
+            if (verbose)
+            {
+                result.Add($"Output {Assemblies.Count} Assemblies");
+                result.AddRange(Assemblies.Select(assembly => '\t' + assembly.ToString()));
+                result.Add($"Referenced {References.Count} Assemblies");
+                result.AddRange(References.Select(assembly => '\t' + assembly.ToString()));
+                result.Add($"Source Files {Resources.Count}");
+                result.AddRange(Resources.Select(resource => '\t' + resource.ToString()));
+                result.Add($"Dependancies {Dependencies.Count}");
+                result.AddRange(Dependencies.Select(dependancy => '\t' + dependancy));
+                result.Add($"Missing Files: {MissingFiles.Count}");
+                result.AddRange(MissingFiles.Select(missing => '\t' + missing.Path));
+            }
+            else
+            {
+                result.Add($"Files: {Resources.Count} Missing: {MissingFiles.Count} References: {References.Count}");
+            }
+            return result;
+        }
 
         public static VisualStudioCsProject Deserialize(string fileName, Action<object, Exception> exceptionHandler)
         {
@@ -68,8 +90,8 @@ namespace Visyn.Build.VisualStudio
 
         private void Analyze(string fileName, Action<object, Exception> exceptionHandler)
         {
-            FileName = fileName;
-            var path = Path;
+            ProjectFilename = fileName;
+            var path = ProjectPath;
             foreach (var item in Items)
             {
                 try

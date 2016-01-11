@@ -1,9 +1,8 @@
-﻿using System;
-using System.IO;
+﻿using Visyn.Build.VisualStudio.CsProj;
 
-namespace Visyn.Build.VisualStudio
+namespace Visyn.Build
 {
-    public class VisualStudioProjectFile
+    public class ProjectFile
     {
         public ResourceType ResourceType { get; private set; }
         public string FileName { get; private set; }
@@ -12,10 +11,10 @@ namespace Visyn.Build.VisualStudio
         public bool FileExists => System.IO.File.Exists(this.Path);
 
         public string Dependancy { get; private set; }
-        public VisualStudioProjectFile(string fileName, ResourceType resourceType, string projectPath)
+        public ProjectFile(string fileName, ResourceType resourceType, string projectPath)
         {
             FileName = fileName;
-            Path = System.IO.Path.Combine(projectPath, FileName); 
+            Path = System.IO.Path.GetFullPath(System.IO.Path.Combine(projectPath, FileName)); 
             ResourceType = resourceType;
         }
 
@@ -26,12 +25,11 @@ namespace Visyn.Build.VisualStudio
                 $"{ResourceType}\t{FileName}";
         }
 
-        public static VisualStudioProjectFile CreateIfValid(ProjectItemGroup item, ResourceType resourceType, string projectPath)
+        public static ProjectFile CreateIfValid(ProjectItemGroup item, ResourceType resourceType, string projectPath)
         {
             return !string.IsNullOrWhiteSpace(item?.Include) ? 
-                new VisualStudioProjectFile(item.Include, resourceType, projectPath) { Dependancy = (item as ProjectItemGroupCompile)?.DependentUpon } :
+                new ProjectFile(item.Include, resourceType, projectPath) { Dependancy = (item as ProjectItemGroupCompile)?.DependentUpon } :
                 null;
         }
-
     }
 }

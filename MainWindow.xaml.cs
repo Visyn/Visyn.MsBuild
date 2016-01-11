@@ -1,10 +1,10 @@
 ﻿using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Windows;
 using Microsoft.Win32;
-using ProtoLib.Util.Xml;
-using Visyn.Build.VisualStudio;
+using Visyn.Build.VisualStudio.CsProj;
 using Visyn.Build.VisualStudio.MsBuild;
+using Visyn.Build.VisualStudio.sln;
 using Visyn.Build.Wix;
 
 namespace Visyn.Build
@@ -14,9 +14,17 @@ namespace Visyn.Build
     /// </summary>
     public partial class MainWindow : Window
     {
+        public bool Verbose { get; set; } = false;
+        public bool Recurse { get; set; } = true;
+
+        public bool Summary { get; set; } = true;
+
         MsBuildProject MsBuildProject { get; set; }
         WixProject WixProject { get; set; }
-        VisualStudioCsProject VisualStudioCsProject { get; set; }
+        List<VisualStudioCsProject> VisualStudioProjects { get; set; } = new List<VisualStudioCsProject>();
+        public VisualStudioSolution VisualStudioSolution { get; set; }
+        public List<ProjectFile> MissingFiles { get; set; } = new List<ProjectFile>();
+        List<VisualStudioProject> MissingProjects { get; } = new List<VisualStudioProject>();
 
         public MainWindow()
         {
@@ -25,7 +33,7 @@ namespace Visyn.Build
 
         public delegate void ExceptionDelegate(object sender, Exception exc);
 
-        private void ExceptionHanddler(object sender, Exception exc)
+        private void ExceptionHandler(object sender, Exception exc)
         {
             terminal.AppendLine(exc.Message);
         }
@@ -33,91 +41,131 @@ namespace Visyn.Build
 
         private void openMenuItem_ItemClick(object sender, DevExpress.Xpf.Bars.ItemClickEventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog
+            var dialog = new OpenFileDialog
             {
-                Filter = $"{MsBuildProject.FileFilter}|{VisualStudioCsProject.FileFilter}|{WixProject.FileFilter}"
+                Filter = $"{VisualStudioSolution.FileFilter}|{MsBuildProject.FileFilter}|{VisualStudioCsProject.FileFilter}|{WixProject.FileFilter}"
             };
             if(dialog.ShowDialog(this) == true)
             {
-                string filename = dialog.FileName;
-                if(filename.EndsWith(".wixproj")) OpenWixProject(filename);
-                else if (filename.EndsWith(".csproj")) OpenVisualStudioProject(filename);
-                else if (filename.EndsWith(".proj")) OpenMsBuildProject(filename);
+                var filename = dialog.FileName;
+                MissingProjects.Clear();
+                OpenProject(filename);
+                ShowSummary();
             }
         }
 
-        private void OpenMsBuildProject(string filename)
+        private void ShowSummary()
         {
-            MsBuildProject = MsBuildProject.Deserialize(filename, ExceptionHanddler);
+            if(Summary)
+            {
+                terminal.AppendLine("Missing Projects");
+                foreach(var missing in MissingProjects)
+                {
+                    terminal.AppendLine(missing.Path);
+                }
+            }
+        }
+
+        private void OpenProject(string filename)
+        {
+            ProjectFileBase project=null;
+            if (filename.EndsWith(".wixproj")) project = OpenWixProject(filename);
+            else if (filename.EndsWith(".csproj")) project = OpenVisualStudioCsProject(filename);
+            else if (filename.EndsWith(".proj")) project = OpenMsBuildProject(filename);
+            else if (filename.EndsWith(".sln")) project = OpenVisualStudioSolution(filename);
+            if (project != null)
+            {
+                MissingProjects.AddRange(project.MissingProjects);
+                MissingFiles.AddRange(project.MissingFiles);
+                if (Recurse)
+                {
+                    foreach (var nested in project.VisualStudioProjects)
+                    {
+                        OpenProject(nested.Path);
+                    }
+                }
+            }
+        }
+
+
+        //private void RecurseProjects(List<VisualStudioProject> projects)
+        //{
+        //    if (!Recurse) return;
+        //    foreach (var project in projects)
+        //    {
+        //        OpenProject(project.Path);
+        //    }
+        //}
+
+        private ProjectFileBase OpenVisualStudioSolution(string filename)
+        {
+            VisualStudioSolution = VisualStudioSolution.Deserialize(filename, ExceptionHandler);
+            if (VisualStudioSolution != null)
+            {
+                DisplayResults(VisualStudioSolution);
+            }
+            else
+            {
+                FileOpenFailed("Visual Studio Solution", filename);
+            }
+            return VisualStudioSolution;
+        }
+
+        private ProjectFileBase OpenMsBuildProject(string filename)
+        {
+            MsBuildProject = MsBuildProject.Deserialize(filename, ExceptionHandler);
             if (MsBuildProject != null)
             {
-                terminal.AppendLine($"Opened Visual C# Project File: {Path.GetFileName(filename)}");
-                terminal.AppendLine($"Projects: {MsBuildProject.VisualStudioProjects.Count}");
-                foreach (var project in MsBuildProject.VisualStudioProjects)
-                {
-                    terminal.AppendLine($"\t{project.Name}");
-                }
-                terminal.AppendLine($"Missing Projects: {MsBuildProject.MissingProjects.Count}");
-                foreach (var project in MsBuildProject.MissingProjects)
-                {
-                    terminal.AppendLine($"\t{project.Name}");
-                }
+                DisplayResults( MsBuildProject);
             }
-        }
-
-        private void OpenVisualStudioProject(string filename)
-        {
-
-            VisualStudioCsProject = VisualStudioCsProject.Deserialize(filename, ExceptionHanddler);
-            if(VisualStudioCsProject != null)
+            else
             {
-                terminal.AppendLine($"Opened Visual C# Project File: {Path.GetFileName(filename)}");
-                terminal.AppendLine($"Output {VisualStudioCsProject.Assemblies.Count} Assemblies");
-                foreach(var assembly in VisualStudioCsProject.Assemblies)
-                {
-                    terminal.AppendLine('\t'+assembly.ToString());
-                }
-                terminal.AppendLine($"Referenced {VisualStudioCsProject.References.Count} Assemblies");
-                foreach (var assembly in VisualStudioCsProject.References)
-                {
-                    terminal.AppendLine('\t' + assembly.ToString());
-                }
-                terminal.AppendLine($"Source Files {VisualStudioCsProject.Resources.Count}");
-                foreach(var resource in VisualStudioCsProject.Resources)
-                {
-                    terminal.AppendLine('\t'+resource.ToString());
-                }
-                terminal.AppendLine($"Dependancies {VisualStudioCsProject.Dependencies.Count}");
-                foreach (var dependancy in VisualStudioCsProject.Dependencies)
-                {
-                    terminal.AppendLine('\t' + dependancy);
-                }
-
-                terminal.AppendLine($"Missing Files: {VisualStudioCsProject.MissingFiles.Count}");
-                foreach (var missing in VisualStudioCsProject.MissingFiles)
-                {
-                    terminal.AppendLine('\t' + missing.Path);
-                }
+                FileOpenFailed("MsBuild Project",filename);
             }
-            return;
+            return MsBuildProject;
         }
 
-        private void OpenWixProject(string filename)
+        private ProjectFileBase OpenWixProject(string filename)
         {
-            WixProject = XmlIO.Deserialize<WixProject>(filename, ExceptionHanddler);
+            WixProject = WixProject.Deserialize(filename, ExceptionHandler);
             if (WixProject != null)
             {
-                var projects = WixProject.Projects;
-                var shortFile = Path.GetFileName(filename);
-                terminal.AppendLine($"Opened Wix Project File: {shortFile}");
-                terminal.AppendLine($"Found {projects.Count} projects");
-                foreach (var project in projects)
-                {
-                    terminal.AppendLine(project.Name);
-                    terminal.AppendLine('\t' + project.Include);
-                    terminal.AppendLine('\t' + project.Project);
-                }
+                DisplayResults(WixProject);
             }
+            else
+            {
+                FileOpenFailed("Wix Project",filename);
+            }
+            return WixProject;
+        }
+        private ProjectFileBase OpenVisualStudioCsProject(string filename)
+        {
+            var cSharpProject = VisualStudioCsProject.Deserialize(filename, ExceptionHandler);
+            if (cSharpProject != null)
+            {
+                DisplayResults(cSharpProject);
+                if (cSharpProject.ImportFailed) FileOpenFailed(cSharpProject.FileType, filename);
+                VisualStudioProjects.Add(cSharpProject);
+            }
+            else
+            {
+                FileOpenFailed("Visual Studio C# Project", filename);
+            }
+            return cSharpProject;
+        }
+
+        private void DisplayResults(ProjectFileBase project)
+        {
+            var results = project.Results(Verbose);
+            foreach (var line in results)
+            {
+                terminal.AppendLine(line);
+            }
+        }
+
+        private void FileOpenFailed(string filetype, string filename)
+        {
+            terminal.AppendLine($"Opening {filetype} failed! File: {filename}");
         }
     }
 }
