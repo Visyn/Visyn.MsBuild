@@ -7,6 +7,8 @@ namespace Visyn.Build.VisualStudio
 {
     public abstract class VisualStudioProject : ProjectFileBase
     {
+        [XmlIgnore]
+        public string TargetFrameworkVersion { get; set; }
         [XmlAttribute()]
         public string DefaultTargets { get; set; }
 

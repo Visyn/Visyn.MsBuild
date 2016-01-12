@@ -36,6 +36,7 @@ namespace Visyn.Build.VisualStudio.CsProj
             var result = new List<string>() {$"Opened {FileType} File: {ProjectPath}"};
             if (verbose)
             {
+                result.Add($"TargetFrameworkVersion {TargetFrameworkVersion}");
                 result.Add($"Output {Assemblies.Count} Assemblies");
                 result.AddRange(Assemblies.Select(assembly => '\t' + assembly.ToString()));
                 result.Add($"Referenced {References.Count} Assemblies");
@@ -78,6 +79,8 @@ namespace Visyn.Build.VisualStudio.CsProj
                         {
                             Assemblies.Add(new VsAssemblyInfo(propertyGroup));
                         }
+                        if (!string.IsNullOrWhiteSpace(propertyGroup.TargetFrameworkVersion))
+                            TargetFrameworkVersion = propertyGroup.TargetFrameworkVersion;
                         continue;
                     }
                     var itemGroup = item as ItemGroup;
