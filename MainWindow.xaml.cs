@@ -228,10 +228,7 @@ namespace Visyn.Build
         private void DisplayResults(ProjectFileBase project)
         {
             var results = project.Results(Verbose);
-            foreach (var line in results)
-            {
-                terminal.AppendLine(line);
-            }
+            terminal.AppendLines(results);
         }
 
         private void FileOpenFailed(string filetype, string filename)
@@ -245,6 +242,16 @@ namespace Visyn.Build
         protected virtual void RaisePropertyChangedEvent([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void gacMenuItem_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var files = ProtoLib.Util.Gac.GacUtil.GacFileInfo();
+            foreach(var file in files)
+            {
+                terminal.AppendLine($"{file.FileName}\t{file.FileVersion}\t{file.ProductVersion}");
+            }
+            //terminal.AppendLines(files);
         }
     }
 }
