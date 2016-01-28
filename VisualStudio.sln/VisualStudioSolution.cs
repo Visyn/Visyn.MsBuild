@@ -125,7 +125,7 @@ namespace Visyn.Build.VisualStudio.sln
             var split = value.Split(',');
             if (split.Length != 3) return null;
             
-            var project = new NestedProject(split[1].Trim().Trim('"').Trim('\\'),ProjectPath)
+            var project = new NestedProject(this,split[1].Trim().Trim('"').Trim('\\'))
             {
                 Name = split[0].Trim().Trim('"').Trim('\\'),
                 Guid = split[2].Trim().Trim('"').Trim('\\').Trim(guidTrimChars)

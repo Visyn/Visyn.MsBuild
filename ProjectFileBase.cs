@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
-using ProtoLib.Util.Reflection.Attributes;
-using Visyn.Build.VisualStudio.CsProj;
 
 namespace Visyn.Build
 {
@@ -16,6 +14,8 @@ namespace Visyn.Build
         public string ProjectPath => System.IO.Path.GetDirectoryName(ProjectFilename);
         [XmlIgnore]
         public abstract string FileType { get; }
+
+        protected Dictionary<string, string> Globals { get; set; } = new Dictionary<string, string>();
         [XmlIgnore]
         public bool ImportFailed { get; private set; }
         [XmlIgnore]
@@ -90,6 +90,25 @@ namespace Visyn.Build
             result.AddRange(missing.Select(nested => $"{nested.Path}"));
 
             return result;
+        }
+
+        protected string ProcessPath(string path)
+        {
+            foreach (var global in Globals.Keys)
+            {
+                var match = "$(" + global + ")";
+                if (path.Contains(match))
+                {
+                    path = path.Replace(match, Globals[global]);
+                }
+            }
+            return path;
+        }
+
+        public string GetFullPath(string hintPath)
+        {
+            var path = ProcessPath(hintPath);
+            return System.IO.Path.GetFullPath(System.IO.Path.Combine(ProjectPath, hintPath));
         }
     }
 }

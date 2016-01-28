@@ -70,7 +70,7 @@ namespace Visyn.Build.Wix
                 if (itemGroup?.ProjectReference == null) continue;
                 foreach (var reference in itemGroup.ProjectReference.Where(NestedProject.IsValidProjectReference))
                 {
-                    Projects.Add(new NestedProject(reference, ProjectPath));
+                    Projects.Add(new NestedProject(this,reference));
                 }
             }
             base.Analyze(fileName,exceptionHandler);

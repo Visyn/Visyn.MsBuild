@@ -14,18 +14,20 @@ namespace Visyn.Build
         public bool FileExists => System.IO.File.Exists(this.Path);
         public string Guid { get; set; }
 
-        public NestedProject(ProjectItemGroupProjectReference reference, string projectPath)
+        public NestedProject(ProjectFileBase project, ProjectItemGroupProjectReference reference)
         {
             Name = reference.Name;
             Include = reference.Include;
             Project = reference.Project;
-            Path = System.IO.Path.GetFullPath(System.IO.Path.Combine(projectPath, Include));
+            Path = project.GetFullPath(Include);
+            //Path = System.IO.Path.GetFullPath(System.IO.Path.Combine(projectPath, Include));
         }
 
-        public NestedProject(string item, string projectPath)
+        public NestedProject(ProjectFileBase project, string item)
         {
             Name = item;
-            Path = System.IO.Path.GetFullPath(System.IO.Path.Combine(projectPath,item));
+            Path = project.GetFullPath(item);
+            //Path = System.IO.Path.GetFullPath(System.IO.Path.Combine(projectPath,item));
         }
 
         public static bool IsValidProjectReference(ProjectItemGroupProjectReference reference)

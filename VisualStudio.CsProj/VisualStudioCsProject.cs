@@ -66,7 +66,7 @@ namespace Visyn.Build.VisualStudio.CsProj
         protected override void Analyze(string fileName, Action<object, Exception> exceptionHandler)
         {
             ProjectFilename = fileName;
-            var path = ProjectPath;
+            //var path = ProjectPath;
             foreach (var item in Items)
             {
                 try
@@ -90,14 +90,14 @@ namespace Visyn.Build.VisualStudio.CsProj
                         {
                             foreach (var reference in itemGroup.Reference)
                             {
-                                var r = VsAssemblyInfo.CreateIfValid(reference);
+                                var r = VsAssemblyInfo.CreateIfValid(reference,this);
                                 if (r != null)
                                 {
                                     References.Add(r);
                                 }
                             }
                         }
-                        SourceFiles.AddRange(itemGroup.SourceFiles(path));
+                        SourceFiles.AddRange(itemGroup.SourceFiles(this));
                     }
                 }
                 catch (Exception exc)
@@ -107,6 +107,14 @@ namespace Visyn.Build.VisualStudio.CsProj
                 }
             }
             base.Analyze(fileName,exceptionHandler);
+            foreach(var r in References)
+            {
+                if (!r.Exists)
+                {
+                    if(!string.IsNullOrWhiteSpace(r.Path)) MissingFiles.Add(new ProjectFile(r.Name, ResourceType.Reference, r.Path));
+                    else MissingFiles.Add(new ProjectFile(r.Name, ResourceType.Reference, this));
+                }
+            }
         }
     }
 }

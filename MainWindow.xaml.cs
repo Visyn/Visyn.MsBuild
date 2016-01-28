@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using DevExpress.Xpf.Bars;
 using Microsoft.Win32;
+using ProtoLib.Util.Gac;
 using Visyn.Build.Annotations;
 using Visyn.Build.VisualStudio;
 using Visyn.Build.VisualStudio.CsProj;
@@ -246,10 +247,12 @@ namespace Visyn.Build
 
         private void gacMenuItem_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var files = ProtoLib.Util.Gac.GacUtil.GacFileInfo();
-            foreach(var file in files)
+            var gac = GacUtil.Instance;
+           // var files = ProtoLib.Util.Gac.GacUtil.GetGlobalAssemblyCacheFiles();
+            foreach (var file in gac.GacFiles.Values)
             {
-                terminal.AppendLine($"{file.FileName}\t{file.FileVersion}\t{file.ProductVersion}");
+                //terminal.AppendLine(file);
+                terminal.AppendLine($"{file.Name}\t{file.FullName}");
             }
             //terminal.AppendLines(files);
         }

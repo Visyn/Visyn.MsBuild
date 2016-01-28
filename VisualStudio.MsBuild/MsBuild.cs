@@ -30,11 +30,11 @@ namespace Visyn.Build.VisualStudio.MsBuild
         protected override void Analyze(string fileName, Action<object, Exception> exceptionHandler)
         {
             ProjectFilename = fileName;
-            var path = ProjectPath;
+            //var path = ProjectPath;
             foreach(var item in ItemGroup)
             {
                 var projectPath = item.Include.Replace("$(MSBuildProjectDirectory)", ".");
-                Projects.Add(new NestedProject(projectPath, path));
+                Projects.Add(new NestedProject(this, projectPath));
             }
             base.Analyze(fileName,exceptionHandler);
         }

@@ -16,19 +16,20 @@ namespace Visyn.Build.VisualStudio
         [XmlAttribute()]
         public decimal ToolsVersion { get; set; }
 
+
         [XmlIgnore]
         public List<string> Dependencies
         {
             get
             {
-                var _dependancies = new List<string>();
+                var dependancies = new List<string>();
                 foreach (var item in SourceFiles)
                 {
                     if (string.IsNullOrWhiteSpace(item.Dependancy)) continue;
                     var dep = item.Dependancy.Trim();
-                    if (!_dependancies.Contains(dep)) _dependancies.Add(dep);
+                    if (!dependancies.Contains(dep)) dependancies.Add(dep);
                 }
-                return _dependancies;
+                return dependancies;
             }
         }
 

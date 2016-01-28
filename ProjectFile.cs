@@ -11,10 +11,19 @@ namespace Visyn.Build
         public bool FileExists => System.IO.File.Exists(this.Path);
 
         public string Dependancy { get; private set; }
-        public ProjectFile(string fileName, ResourceType resourceType, string projectPath)
+        public ProjectFile(string fileName, ResourceType resourceType, ProjectFileBase project)
         {
             FileName = fileName;
-            Path = System.IO.Path.GetFullPath(System.IO.Path.Combine(projectPath, FileName)); 
+            Path = project.GetFullPath(FileName);
+            //Path = System.IO.Path.GetFullPath(System.IO.Path.Combine(projectPath, FileName)); 
+            ResourceType = resourceType;
+        }
+
+        public ProjectFile(string fileName, ResourceType resourceType, string path)
+        {
+            FileName = fileName;
+            Path = path;
+            //Path = System.IO.Path.GetFullPath(System.IO.Path.Combine(projectPath, FileName)); 
             ResourceType = resourceType;
         }
 
@@ -25,10 +34,10 @@ namespace Visyn.Build
                 $"{ResourceType}\t{FileName}";
         }
 
-        public static ProjectFile CreateIfValid(ProjectItemGroup item, ResourceType resourceType, string projectPath)
+        public static ProjectFile CreateIfValid(ProjectItemGroup item, ResourceType resourceType, ProjectFileBase project)
         {
             return !string.IsNullOrWhiteSpace(item?.Include) ? 
-                new ProjectFile(item.Include, resourceType, projectPath) { Dependancy = (item as Compile)?.DependentUpon } :
+                new ProjectFile(item.Include, resourceType, project) { Dependancy = (item as Compile)?.DependentUpon } :
                 null;
         }
     }

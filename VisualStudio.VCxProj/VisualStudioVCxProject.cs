@@ -49,7 +49,6 @@ namespace Visyn.Build.VisualStudio.VCxProj
             }
             return result;
         }
-        protected Dictionary<string,string> Globals { get; set; } = new Dictionary<string, string>(); 
         protected override void Analyze(string fileName, Action<object, Exception> exceptionHandler)
         {
             ProjectFilename = fileName;
@@ -68,8 +67,8 @@ namespace Visyn.Build.VisualStudio.VCxProj
                     }
                     if (itemGroup != null)
                     {
-                        ExtractSourceFiles(itemGroup.ClCompile, projectPath);
-                        ExtractSourceFiles(itemGroup.ClInclude, projectPath);
+                        ExtractSourceFiles(itemGroup.ClCompile);
+                        ExtractSourceFiles(itemGroup.ClInclude);
                     }
                 }
                 catch (Exception exc)
@@ -95,23 +94,15 @@ namespace Visyn.Build.VisualStudio.VCxProj
             }
         }
 
-        private void ExtractSourceFiles(IReadOnlyCollection<ClInclude> itemGroup, string projectPath)
+        private void ExtractSourceFiles(IReadOnlyCollection<ClInclude> itemGroup)
         {
             if (itemGroup != null && itemGroup.Count > 0)
             {
                 foreach (var compile in itemGroup)
                 {
                     if (string.IsNullOrWhiteSpace(compile.Include)) continue;
-                    var path = compile.Include;
-                    foreach (var global in Globals.Keys)
-                    {
-                        var match = "$(" + global + ")";
-                        if (path.Contains(match))
-                        {
-                            path = path.Replace(match, Globals[global]);
-                        }
-                    }
-                    SourceFiles.Add(new ProjectFile(path, ResourceType.SourceFile, projectPath));
+                    var path = ProcessPath(compile.Include);
+                    SourceFiles.Add(new ProjectFile(path, ResourceType.SourceFile, this));
                 }
             }
         }

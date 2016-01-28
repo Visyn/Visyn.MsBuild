@@ -43,32 +43,32 @@ namespace Visyn.Build.VisualStudio.CsProj
         public Reference[] Reference { get; set; }
 
 
-        public List<ProjectFile> SourceFiles(string projectPath)
+        public List<ProjectFile> SourceFiles(ProjectFileBase project)
         {
-            var files = ExtractSourceFiles(Compile, ResourceType.SourceFile,projectPath);
-            files.AddRange(ExtractSourceFiles(EmbeddedResource, ResourceType.EmbeddedResource, projectPath));
-            files.AddRange(ExtractSourceFiles(Resource, ResourceType.Resource, projectPath));
+            var files = ExtractSourceFiles(Compile, ResourceType.SourceFile,project);
+            files.AddRange(ExtractSourceFiles(EmbeddedResource, ResourceType.EmbeddedResource, project));
+            files.AddRange(ExtractSourceFiles(Resource, ResourceType.Resource, project));
 
-            files.AddRange(ExtractSourceFiles(ProjectReference, ResourceType.ProjectReference, projectPath));
+            files.AddRange(ExtractSourceFiles(ProjectReference, ResourceType.ProjectReference, project));
 
-            files.AddRange(ExtractSourceFiles(Reference, ResourceType.Reference, projectPath));
-            if(Content != null) files.AddRange(ExtractSourceFiles(new [] { Content } , ResourceType.Content, projectPath));
-            if (ApplicationDefinition != null) files.AddRange(ExtractSourceFiles(new[] { ApplicationDefinition }, ResourceType.ApplicationDefinition, projectPath));
+            files.AddRange(ExtractSourceFiles(Reference, ResourceType.Reference, project));
+            if(Content != null) files.AddRange(ExtractSourceFiles(new [] { Content } , ResourceType.Content, project));
+            if (ApplicationDefinition != null) files.AddRange(ExtractSourceFiles(new[] { ApplicationDefinition }, ResourceType.ApplicationDefinition, project));
             
-            files.AddRange(ExtractSourceFiles(Page,ResourceType.Page, projectPath));
-            files.AddRange(ExtractSourceFiles(None, ResourceType.Unknown, projectPath));
+            files.AddRange(ExtractSourceFiles(Page,ResourceType.Page, project));
+            files.AddRange(ExtractSourceFiles(None, ResourceType.Unknown, project));
             return files;
         }
 
 
 
-        private static List<ProjectFile> ExtractSourceFiles(IEnumerable<ProjectItemGroup> items, ResourceType resourceType, string projectPath)
+        private static List<ProjectFile> ExtractSourceFiles(IEnumerable<ProjectItemGroup> items, ResourceType resourceType, ProjectFileBase project)
         {
             var files = new List<ProjectFile>();
             if (items == null) return files;
             foreach (var item in items)
             {
-                var resource = ProjectFile.CreateIfValid(item, resourceType, projectPath);
+                var resource = ProjectFile.CreateIfValid(item, resourceType, project);
                 if (resource != null)
                 {
                     files.Add(resource);
