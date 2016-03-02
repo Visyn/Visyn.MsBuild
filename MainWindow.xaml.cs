@@ -251,8 +251,8 @@ namespace Visyn.Build
            // var files = ProtoLib.Util.Gac.GacUtil.GetGlobalAssemblyCacheFiles();
             foreach (var file in gac.GacFiles.Values)
             {
-                //terminal.AppendLine(file);
-                terminal.AppendLine($"{file.Name}\t{file.FullName}");
+                if(file.Name.Contains("CData") || file.FullName.Contains("CData"))
+                    terminal.AppendLine($"{file.Name}\t{file.DirectoryName}");
             }
             //terminal.AppendLines(files);
         }
