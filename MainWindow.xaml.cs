@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using DevExpress.Xpf.Bars;
 using Microsoft.Win32;
-using ProtoLib.Util.Gac;
+using Visyn.Util.Gac;
 using Visyn.Build.Annotations;
 using Visyn.Build.VisualStudio;
 using Visyn.Build.VisualStudio.CsProj;

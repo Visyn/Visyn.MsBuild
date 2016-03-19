@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using ProtoLib.Util.Gac;
+using Visyn.Util.Gac;
 
 namespace Visyn.Build.VisualStudio.CsProj
 {

@@ -14,7 +14,7 @@
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <AssemblyVersion>1.0.0.234</AssemblyVersion>
+    <AssemblyVersion>1.0.0.241</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -153,13 +153,13 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\Util\ProtoLib.Util.csproj">
+    <ProjectReference Include="..\Util\Visyn.Util.csproj">
       <Project>{b00939b4-84eb-436c-a32d-219f061201cc}</Project>
-      <Name>ProtoLib.Util</Name>
+      <Name>Visyn.Util</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Wpf\ProtoLib.Wpf.csproj">
+    <ProjectReference Include="..\Wpf\Visyn.Wpf.csproj">
       <Project>{883254c2-cc7d-43a1-9403-15288878b3c5}</Project>
-      <Name>ProtoLib.Wpf</Name>
+      <Name>Visyn.Wpf</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

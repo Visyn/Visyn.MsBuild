@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using ProtoLib.Util.Types;
+using Visyn.Util.Types;
 
 namespace Visyn.Build.VisualStudio.sln
 {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
-using ProtoLib.Util.Xml;
+using Visyn.Util.Xml;
 
 namespace Visyn.Build.VisualStudio.CsProj
 {

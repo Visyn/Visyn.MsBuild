@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using ProtoLib.Util.Xml;
+using Visyn.Util.Xml;
 
 namespace Visyn.Build.VisualStudio.MsBuild
 {
