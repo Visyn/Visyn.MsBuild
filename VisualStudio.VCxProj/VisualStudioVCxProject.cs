@@ -23,7 +23,7 @@ namespace Visyn.Build.VisualStudio.VCxProj
         [XmlElement("PropertyGroup", typeof(PropertyGroup))]
         public object[] Items { get; set; }
 
-        public static VisualStudioVCxProject Deserialize(string fileName, Action<object, Exception> exceptionHandler)
+        public static VisualStudioVCxProject Deserialize(string fileName, Func<object, Exception,bool> exceptionHandler)
         {
             var project = XmlIO.Deserialize<VisualStudioVCxProject>(fileName, exceptionHandler);
             if (project == null) return null;
@@ -49,7 +49,7 @@ namespace Visyn.Build.VisualStudio.VCxProj
             }
             return result;
         }
-        protected override void Analyze(string fileName, Action<object, Exception> exceptionHandler)
+        protected override void Analyze(string fileName, Func<object, Exception,bool> exceptionHandler)
         {
             ProjectFilename = fileName;
             var projectPath = ProjectPath;

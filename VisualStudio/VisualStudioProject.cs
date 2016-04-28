@@ -33,7 +33,7 @@ namespace Visyn.Build.VisualStudio
             }
         }
 
-        protected override void Analyze(string fileName, Action<object, Exception> exceptionHandler)
+        protected override void Analyze(string fileName, Func<object, Exception,bool> exceptionHandler)
         {
             MissingFiles.AddRange(
                 SourceFiles.Where(

@@ -42,7 +42,7 @@ namespace Visyn.Build
             }
         }
 
-        protected virtual void Analyze(string fileName, Action<object, Exception> exceptionHandler)
+        protected virtual void Analyze(string fileName, Func<object, Exception,bool> exceptionHandler)
         {
             foreach (var project in Projects)
             {
@@ -50,7 +50,7 @@ namespace Visyn.Build
             }
         }
 
-        protected void FileFormatException(Action<object, Exception> exceptionHandler, string message)
+        protected void FileFormatException(Func<object, Exception,bool> exceptionHandler, string message)
         {
             ImportFailed = true;
             var exception = new FileFormatException(new Uri(ProjectFilename), message);

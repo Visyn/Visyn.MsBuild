@@ -25,7 +25,7 @@ namespace Visyn.Build.VisualStudio.sln
             return base.Results(verbose);
         }
 
-        public static VisualStudioSolution Deserialize(string filename, Action<object, Exception> exceptionHandler)
+        public static VisualStudioSolution Deserialize(string filename, Func<object, Exception,bool> exceptionHandler)
         {
             if (!File.Exists(filename)) return null;
             var lines = File.ReadAllLines(filename);
@@ -41,7 +41,7 @@ namespace Visyn.Build.VisualStudio.sln
             return null;
         }
 
-        private bool Parse(List<string> body, Action<object, Exception> exceptionHandler)
+        private bool Parse(List<string> body, Func<object, Exception,bool> exceptionHandler)
         {
             RemoveComments(body, "#");
             if (FileVersion > 11)
@@ -63,7 +63,7 @@ namespace Visyn.Build.VisualStudio.sln
         }
 
 
-        private bool ParseSection(List<string> body, Action<object, Exception> exceptionHandler)
+        private bool ParseSection(List<string> body, Func<object, Exception,bool> exceptionHandler)
         {
             if (body == null || body.Count == 0) return false;
 
@@ -104,7 +104,7 @@ namespace Visyn.Build.VisualStudio.sln
         }
 
 
-        private List<string> ExtractLinesUntil(List<string> body, string endLabel, Action<object, Exception> exceptionHandler)
+        private List<string> ExtractLinesUntil(List<string> body, string endLabel, Func<object, Exception,bool> exceptionHandler)
         {
             var section = new List<string>();
 
@@ -133,7 +133,7 @@ namespace Visyn.Build.VisualStudio.sln
             return project;
         }
 
-        private bool ScanUntilKeyValuePair(ref List<string> lines, string key, out string value, Action<object, Exception> exceptionHandler)
+        private bool ScanUntilKeyValuePair(ref List<string> lines, string key, out string value, Func<object, Exception,bool> exceptionHandler)
         { 
             while (lines.Count > 0)
             {

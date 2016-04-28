@@ -64,9 +64,10 @@ namespace Visyn.Build
 
         public delegate void ExceptionDelegate(object sender, Exception exc);
 
-        private void ExceptionHandler(object sender, Exception exc)
+        private bool ExceptionHandler(object sender, Exception exc)
         {
             terminal.AppendLine(exc.Message);
+            return true;
         }
 
 

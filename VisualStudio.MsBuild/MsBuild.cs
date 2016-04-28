@@ -27,7 +27,7 @@ namespace Visyn.Build.VisualStudio.MsBuild
         public string DefaultTargets { get; set; }
 
 
-        protected override void Analyze(string fileName, Action<object, Exception> exceptionHandler)
+        protected override void Analyze(string fileName, Func<object, Exception,bool> exceptionHandler)
         {
             ProjectFilename = fileName;
             //var path = ProjectPath;
@@ -39,7 +39,7 @@ namespace Visyn.Build.VisualStudio.MsBuild
             base.Analyze(fileName,exceptionHandler);
         }
 
-        public static MsBuildProject Deserialize(string fileName, Action<object, Exception> exceptionHandler)
+        public static MsBuildProject Deserialize(string fileName, Func<object, Exception,bool> exceptionHandler)
         {
             var project = XmlIO.Deserialize<MsBuildProject>(fileName, exceptionHandler);
             if (project == null) return null;

@@ -55,7 +55,7 @@ namespace Visyn.Build.VisualStudio.CsProj
             return result;
         }
 
-        public static VisualStudioCsProject Deserialize(string fileName, Action<object, Exception> exceptionHandler)
+        public static VisualStudioCsProject Deserialize(string fileName, Func<object, Exception,bool> exceptionHandler)
         {
             var project = XmlIO.Deserialize<VisualStudioCsProject>(fileName, exceptionHandler);
             if (project == null) return null;
@@ -63,7 +63,7 @@ namespace Visyn.Build.VisualStudio.CsProj
             return project;
         }
 
-        protected override void Analyze(string fileName, Action<object, Exception> exceptionHandler)
+        protected override void Analyze(string fileName, Func<object, Exception,bool> exceptionHandler)
         {
             ProjectFilename = fileName;
             //var path = ProjectPath;

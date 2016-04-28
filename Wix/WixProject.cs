@@ -53,7 +53,7 @@ namespace Visyn.Build.Wix
         //    }
         //}
 
-        public static WixProject Deserialize(string fileName, Action<object, Exception> exceptionHandler)
+        public static WixProject Deserialize(string fileName, Func<object, Exception,bool> exceptionHandler)
         {
             var project = XmlIO.Deserialize<WixProject>(fileName, exceptionHandler);
             if (project == null) return null;
@@ -61,7 +61,7 @@ namespace Visyn.Build.Wix
             return project;
         }
 
-        protected override void Analyze(string fileName, Action<object, Exception> exceptionHandler)
+        protected override void Analyze(string fileName, Func<object, Exception,bool> exceptionHandler)
         {
             ProjectFilename = fileName;
             foreach (var item in Items)
