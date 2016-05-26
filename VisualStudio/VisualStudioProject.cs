@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
+using Visyn.Util.Events;
 
 namespace Visyn.Build.VisualStudio
 {
