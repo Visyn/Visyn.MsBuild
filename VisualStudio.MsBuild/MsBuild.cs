@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Visyn.Util.Events;
 using Visyn.Util.Xml;
 
 namespace Visyn.Build.VisualStudio.MsBuild
@@ -27,7 +28,7 @@ namespace Visyn.Build.VisualStudio.MsBuild
         public string DefaultTargets { get; set; }
 
 
-        protected override void Analyze(string fileName, Func<object, Exception,bool> exceptionHandler)
+        protected override void Analyze(string fileName, ExceptionHandler exceptionHandler)
         {
             ProjectFilename = fileName;
             //var path = ProjectPath;
@@ -39,7 +40,7 @@ namespace Visyn.Build.VisualStudio.MsBuild
             base.Analyze(fileName,exceptionHandler);
         }
 
-        public static MsBuildProject Deserialize(string fileName, Func<object, Exception,bool> exceptionHandler)
+        public static MsBuildProject Deserialize(string fileName, ExceptionHandler exceptionHandler)
         {
             var project = XmlIO.Deserialize<MsBuildProject>(fileName, exceptionHandler);
             if (project == null) return null;

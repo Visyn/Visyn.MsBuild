@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
+using Visyn.Util.Events;
 
 namespace Visyn.Build
 {
@@ -42,7 +43,7 @@ namespace Visyn.Build
             }
         }
 
-        protected virtual void Analyze(string fileName, Func<object, Exception,bool> exceptionHandler)
+        protected virtual void Analyze(string fileName, ExceptionHandler exceptionHandler)
         {
             foreach (var project in Projects)
             {
@@ -50,7 +51,7 @@ namespace Visyn.Build
             }
         }
 
-        protected void FileFormatException(Func<object, Exception,bool> exceptionHandler, string message)
+        protected void FileFormatException(ExceptionHandler exceptionHandler, string message)
         {
             ImportFailed = true;
             var exception = new FileFormatException(new Uri(ProjectFilename), message);

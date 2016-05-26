@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Visyn.Util.Events;
 using Visyn.Util.Types;
 
 namespace Visyn.Build.VisualStudio.sln
@@ -25,7 +26,7 @@ namespace Visyn.Build.VisualStudio.sln
             return base.Results(verbose);
         }
 
-        public static VisualStudioSolution Deserialize(string filename, Func<object, Exception,bool> exceptionHandler)
+        public static VisualStudioSolution Deserialize(string filename, ExceptionHandler exceptionHandler)
         {
             if (!File.Exists(filename)) return null;
             var lines = File.ReadAllLines(filename);
@@ -41,7 +42,7 @@ namespace Visyn.Build.VisualStudio.sln
             return null;
         }
 
-        private bool Parse(List<string> body, Func<object, Exception,bool> exceptionHandler)
+        private bool Parse(List<string> body, ExceptionHandler exceptionHandler)
         {
             RemoveComments(body, "#");
             if (FileVersion > 11)
@@ -63,7 +64,7 @@ namespace Visyn.Build.VisualStudio.sln
         }
 
 
-        private bool ParseSection(List<string> body, Func<object, Exception,bool> exceptionHandler)
+        private bool ParseSection(List<string> body, ExceptionHandler exceptionHandler)
         {
             if (body == null || body.Count == 0) return false;
 
@@ -104,7 +105,7 @@ namespace Visyn.Build.VisualStudio.sln
         }
 
 
-        private List<string> ExtractLinesUntil(List<string> body, string endLabel, Func<object, Exception,bool> exceptionHandler)
+        private List<string> ExtractLinesUntil(List<string> body, string endLabel, ExceptionHandler exceptionHandler)
         {
             var section = new List<string>();
 
@@ -133,7 +134,7 @@ namespace Visyn.Build.VisualStudio.sln
             return project;
         }
 
-        private bool ScanUntilKeyValuePair(ref List<string> lines, string key, out string value, Func<object, Exception,bool> exceptionHandler)
+        private bool ScanUntilKeyValuePair(ref List<string> lines, string key, out string value, ExceptionHandler exceptionHandler)
         { 
             while (lines.Count > 0)
             {

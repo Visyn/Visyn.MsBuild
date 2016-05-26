@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
+using Visyn.Util.Events;
 using Visyn.Util.Xml;
 
 namespace Visyn.Build.Wix
@@ -53,7 +54,7 @@ namespace Visyn.Build.Wix
         //    }
         //}
 
-        public static WixProject Deserialize(string fileName, Func<object, Exception,bool> exceptionHandler)
+        public static WixProject Deserialize(string fileName, ExceptionHandler exceptionHandler)
         {
             var project = XmlIO.Deserialize<WixProject>(fileName, exceptionHandler);
             if (project == null) return null;
@@ -61,7 +62,7 @@ namespace Visyn.Build.Wix
             return project;
         }
 
-        protected override void Analyze(string fileName, Func<object, Exception,bool> exceptionHandler)
+        protected override void Analyze(string fileName, ExceptionHandler exceptionHandler)
         {
             ProjectFilename = fileName;
             foreach (var item in Items)

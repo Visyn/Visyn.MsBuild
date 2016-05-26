@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
+using Visyn.Util.Events;
 using Visyn.Util.Xml;
 
 namespace Visyn.Build.VisualStudio.CsProj
@@ -55,7 +56,7 @@ namespace Visyn.Build.VisualStudio.CsProj
             return result;
         }
 
-        public static VisualStudioCsProject Deserialize(string fileName, Func<object, Exception,bool> exceptionHandler)
+        public static VisualStudioCsProject Deserialize(string fileName, ExceptionHandler exceptionHandler)
         {
             var project = XmlIO.Deserialize<VisualStudioCsProject>(fileName, exceptionHandler);
             if (project == null) return null;
@@ -63,7 +64,7 @@ namespace Visyn.Build.VisualStudio.CsProj
             return project;
         }
 
-        protected override void Analyze(string fileName, Func<object, Exception,bool> exceptionHandler)
+        protected override void Analyze(string fileName, ExceptionHandler exceptionHandler)
         {
             ProjectFilename = fileName;
             //var path = ProjectPath;
