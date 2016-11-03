@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using DevExpress.Xpf.Bars;
@@ -142,6 +143,12 @@ namespace Visyn.Build
         private void ShowSummary()
         {
             if (!Summary) return;
+            foreach (var project in VisualStudioProjects)
+            {
+                if (project == null) continue;
+                var file = project.ProjectFilename.Split('\\').Last();
+                terminal.AppendLine($"\t{file}\t.net {project.TargetFrameworkVersion}\tTools {project.ToolsVersion}");
+            }
             terminal.AppendLine($"Missing Projects: [{MissingProjects.Count}]");
             foreach (var missing in MissingProjects)
             {
