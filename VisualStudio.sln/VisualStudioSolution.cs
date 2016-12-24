@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Visyn.Public.Exceptions;
 using Visyn.Util.Events;
 using Visyn.Util.Types;
 

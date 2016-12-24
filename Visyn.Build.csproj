@@ -166,6 +166,14 @@
       <Project>{b00939b4-84eb-436c-a32d-219f061201cc}</Project>
       <Name>Visyn.Util</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Visyn.Core\Visyn.Core.csproj">
+      <Project>{9c2a8976-44c2-47e1-a56a-d21c8794def0}</Project>
+      <Name>Visyn.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Visyn.Public\Visyn.Public.csproj">
+      <Project>{aba4963b-56ba-4b42-8c2a-17be811e5f8e}</Project>
+      <Name>Visyn.Public</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Wpf\Visyn.Wpf.csproj">
       <Project>{883254c2-cc7d-43a1-9403-15288878b3c5}</Project>
       <Name>Visyn.Wpf</Name>
