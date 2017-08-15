@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Visyn.Public.Exceptions;
-using Visyn.Public.Text;
-using Visyn.Public.Types;
+using Visyn.Exceptions;
+using Visyn.Text;
 using Visyn.Util.Events;
 using Visyn.Util.Types;
 

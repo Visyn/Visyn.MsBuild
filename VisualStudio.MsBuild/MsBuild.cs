@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Visyn.Public.Exceptions;
+using Visyn.Exceptions;
 using Visyn.Util.Events;
 using Visyn.Util.Xml;
 
