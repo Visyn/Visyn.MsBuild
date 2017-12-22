@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Visyn.Exceptions;
 using Visyn.Util.Events;
-using Visyn.Util.Xml;
+using Visyn.Windows.Io.Xml;
 
 namespace Visyn.Build.VisualStudio.MsBuild
 {
