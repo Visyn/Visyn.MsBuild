@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Visyn.Exceptions;
-using Visyn.Util.Events;
 using Visyn.Windows.Io.Xml;
 
-namespace Visyn.Build.VisualStudio.MsBuild
+namespace Visyn.Build.VisualStudio.msbuild
 {
     /// <remarks/>
     [System.Xml.Serialization.XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
