@@ -1,4 +1,6 @@
-﻿using Visyn.Build.VisualStudio.CsProj;
+﻿using Visyn.Exceptions;
+using Visyn.Build.VisualStudio.CsProj;
+using System;
 
 namespace Visyn.Build
 {
@@ -32,6 +34,20 @@ namespace Visyn.Build
             return !string.IsNullOrWhiteSpace(Dependancy) ?
                 $"{ResourceType}\t{FileName}\tDependant: {Dependancy}" :
                 $"{ResourceType}\t{FileName}";
+        }
+
+        public  Compile ToCompile(string projectPath)
+        {
+            // public string AutoGen { get; set; }
+            // public string DesignTime { get; set; }
+            // public string DependentUpon { get; set; }
+            // public string Include { get; set; }
+            var path = this.Path;
+            if(this.Path.Contains(projectPath))
+            {
+                path = this.Path.Replace(projectPath, "");
+            }
+            return new Compile() { Include = path };
         }
 
         public static ProjectFile CreateIfValid(ProjectItemGroup item, ResourceType resourceType, ProjectFileBase project)

@@ -7,7 +7,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{AB7A1A6E-8A91-44ED-8B53-9A7FE764ACAD}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Visyn.Build</RootNamespace>
     <AssemblyName>Visyn.Build</AssemblyName>
@@ -19,7 +19,7 @@
     <AssemblyVersion>1.1.2.455</AssemblyVersion>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <ApplicationVersion>1.1.83.470</ApplicationVersion>
+    <ApplicationVersion>1.1.135.550</ApplicationVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -41,8 +41,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>
-    </StartupObject>
+    <StartupObject>Visyn.Build.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DevExpress.Data.v16.1, Version=16.1.9.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
@@ -80,10 +79,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Commands.cs" />
+    <Compile Include="Gac\GacUtil.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="VisualStudio.CsProj\ConditionalImport.cs" />
+    <Compile Include="VisualStudio.CsProj\ConditionalText.cs" />
+    <Compile Include="VisualStudio.CsProj\ConditionalValue.cs" />
+    <Compile Include="VisualStudio.CsProj\CsProjComparison.cs" />
     <Compile Include="VisualStudio.CsProj\EmbeddedResource.cs" />
     <Compile Include="VisualStudio.CsProj\Import.cs" />
     <Compile Include="VisualStudio.CsProj\ItemGroup.cs" />
@@ -96,6 +101,7 @@
     <Compile Include="VisualStudio.CsProj\Reference.cs" />
     <Compile Include="VisualStudio.CsProj\PropertyGroup.cs" />
     <Compile Include="ResourceType.cs" />
+    <Compile Include="VisualStudio.CsProj\Target.cs" />
     <Compile Include="VisualStudio.CsProj\VisualStudioCsProject.cs" />
     <Compile Include="ProjectFile.cs" />
     <Compile Include="VisualStudio.CsProj\VsAssemblyInfo.cs" />
@@ -163,6 +169,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Visyn.Collection\Lib\Visyn.Collection.csproj">
+      <Project>{67f9d3a8-f71e-4428-913f-c37ae82cdb24}</Project>
+      <Name>Visyn.Collection</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Visyn.Public\Lib\Visyn.Public.csproj">
       <Project>{aba4963b-56ba-4b42-8c2a-17be811e5f8e}</Project>
       <Name>Visyn.Public</Name>
@@ -174,10 +184,6 @@
     <ProjectReference Include="..\Util\Visyn.Util.csproj">
       <Project>{b00939b4-84eb-436c-a32d-219f061201cc}</Project>
       <Name>Visyn.Util</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Visyn.Core\Visyn.Core.csproj">
-      <Project>{9c2a8976-44c2-47e1-a56a-d21c8794def0}</Project>
-      <Name>Visyn.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Wpf\Visyn.Wpf.csproj">
       <Project>{883254c2-cc7d-43a1-9403-15288878b3c5}</Project>

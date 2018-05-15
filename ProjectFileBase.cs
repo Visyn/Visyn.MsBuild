@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 using Visyn.Exceptions;
-using Visyn.Util.Events;
+using Visyn.Windows.Io.Xml;
 
 namespace Visyn.Build
 {
@@ -13,7 +13,7 @@ namespace Visyn.Build
         [XmlIgnore]
         public string ProjectFilename { get; protected set; }
         [XmlIgnore]
-        public string ProjectPath => System.IO.Path.GetDirectoryName(ProjectFilename);
+        public string ProjectPath => Path.GetDirectoryName(ProjectFilename);
         [XmlIgnore]
         public abstract string FileType { get; }
 
@@ -62,27 +62,29 @@ namespace Visyn.Build
 
         public virtual IEnumerable<string> Results(bool verbose)
         {
-            var result = new List<string> { $"Opened {FileType} File: {ProjectFilename}" };
+            var result = new List<string>();
             if (verbose)
             {
+                result.Add($"Opened {FileType} File: {ProjectFilename}");
                 result.Add($"Projects: {Projects.Count}");
                 result.AddRange(Projects.Select(project => $"\t{project.Path}"));
                 result.Add($"Missing Projects: {MissingProjects.Count}");
                 result.AddRange(MissingProjects.Select(project => $"\t{project.Name}\t{project.Path}"));
             }
-            else
+            else if(MissingProjects.Count > 0)
             {
-                result.Add($"Projects: {Projects.Count} Missing: {MissingProjects.Count}");
+                result.Add($"{Path.GetFileName(ProjectFilename)} Projects: {Projects.Count} Missing: {MissingProjects.Count}");
             }
             if (ImportFailed) result.Add($"Opening {FileType} failed! File: {ProjectPath}");
 
             return result;
         }
 
-        public IEnumerable<string> Compare(ProjectFileBase project)
+        public virtual IEnumerable<string> Compare(ProjectFileBase project, bool verbose)
         {
             var result = new List<string>
             {
+                $"Compare Projects",
                 $"{this.FileType}:\t{ProjectFilename}",
                 $"{project.FileType}:\t{project.ProjectFilename}"
             };
@@ -92,6 +94,22 @@ namespace Visyn.Build
             result.AddRange(missing.Select(nested => $"{nested.Path}"));
 
             return result;
+        }
+        /// <summary>
+        /// Merges the specified project into the current project.
+        /// </summary>
+        /// <param name="project">The project whose contents are to be merged into the current project.</param>
+        /// <param name="verbose">if set to <c>true</c> [verbose].</param>
+        /// <returns>IEnumerable&lt;System.String&gt;.</returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public virtual IEnumerable<string> Merge(ProjectFileBase project, IEnumerable<string> omit, bool verbose)
+        {
+            throw new NotImplementedException($"{GetType().Name}.{nameof(Merge)} not implemented!");
+        }
+
+        public virtual void Serialize(string fileName, ExceptionHandler exceptionHandler)
+        {
+            XmlIO.Serialize(GetType(),this, fileName, null,exceptionHandler);
         }
 
         protected string ProcessPath(string path)

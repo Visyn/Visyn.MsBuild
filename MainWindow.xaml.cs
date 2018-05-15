@@ -7,10 +7,10 @@ using System.Windows;
 using DevExpress.Xpf.Bars;
 using Microsoft.Win32;
 using Visyn.Build.Properties;
-using Visyn.Util.Gac;
+using Visyn.Build.Gac;
 using Visyn.Build.VisualStudio;
 using Visyn.Build.VisualStudio.CsProj;
-using Visyn.Build.VisualStudio.msbuild;
+using Visyn.Build.VisualStudio.MsBuild;
 using Visyn.Build.VisualStudio.sln;
 using Visyn.Build.VisualStudio.VCxProj;
 using Visyn.Build.Wix;
@@ -29,8 +29,8 @@ namespace Visyn.Build
 
         public bool Summary { get; set; } = true;
 
-        MsBuildProject MsBuildProject { get; set; }
-        WixProject WixProject { get; set; }
+//        MsBuildProject MsBuildProject { get; set; }
+
 
         List<VisualStudioProject> VisualStudioProjects
         {
@@ -60,7 +60,9 @@ namespace Visyn.Build
 
         public MainWindow()
         {
-            InitializeComponent();
+            var results = App.ProcessArgs();
+            if (!App.Headless) InitializeComponent();
+            else Application.Current.Shutdown();
         }
 
         public delegate void ExceptionDelegate(object sender, Exception exc);
@@ -106,7 +108,7 @@ namespace Visyn.Build
 
         private void ShowComparison(VisualStudioSolution visualStudioSolution, ProjectFileBase project)
         {
-            IEnumerable<string> result = visualStudioSolution.Compare(project);
+            IEnumerable<string> result = visualStudioSolution.Compare(project,Verbose);
             foreach(var line in result)
             {
                 terminal.AppendLine(line);
@@ -123,8 +125,9 @@ namespace Visyn.Build
             else if (filename.EndsWith(".proj")) project = OpenMsBuildProject(filename);
             else if (filename.EndsWith(".sln")) project = OpenVisualStudioSolution(filename);
             else ExceptionHandler(this,new Exception($"Un-registered file extension {System.IO.Path.GetExtension(filename)}"));
+
             if (project != null)
-            {
+            {   
                 MissingProjects.AddRange(project.MissingProjects);
                 MissingFiles.AddRange(project.MissingFiles);
                 if (recurse)
@@ -177,32 +180,33 @@ namespace Visyn.Build
 
         private ProjectFileBase OpenMsBuildProject(string filename)
         {
-            MsBuildProject = MsBuildProject.Deserialize(filename, ExceptionHandler);
-            if (MsBuildProject != null)
+            var msBuildProject = MsBuildProject.Deserialize(filename, ExceptionHandler);
+            if (msBuildProject != null)
             {
-                DisplayResults( MsBuildProject);
+                DisplayResults(msBuildProject);
             }
             else
             {
                 FileOpenFailed("MsBuild Project",filename);
             }
-            return MsBuildProject;
+            return msBuildProject;
         }
 
         private ProjectFileBase OpenWixProject(string filename)
         {
-            WixProject = WixProject.Deserialize(filename, ExceptionHandler);
-            if (WixProject != null)
+            var wixProject = WixProject.Deserialize(filename, ExceptionHandler);
+            if (wixProject != null)
             {
-                DisplayResults(WixProject);
+                DisplayResults(wixProject);
             }
             else
             {
                 FileOpenFailed("Wix Project",filename);
             }
-            return WixProject;
+            return wixProject;
         }
-        private ProjectFileBase OpenVisualStudioCsProject(string filename)
+
+        private VisualStudioCsProject OpenVisualStudioCsProject(string filename)
         {
             var cSharpProject = VisualStudioCsProject.Deserialize(filename, ExceptionHandler);
             if (cSharpProject != null)
@@ -263,6 +267,15 @@ namespace Visyn.Build
                     terminal.AppendLine($"{file.Name}\t{file.DirectoryName}");
             }
             //terminal.AppendLines(files);
+        }
+
+        private void window_Loaded(object sender, RoutedEventArgs e)
+        {
+            var proj1 = OpenVisualStudioCsProject("C:\\Customer\\Lucent\\Visyn.Public\\Lib\\Visyn.Public.csproj");
+            var proj2 = OpenVisualStudioCsProject("C:\\Customer\\Lucent\\Visyn.Public\\Lib\\Visyn.Public.Temp.csproj");
+
+            var results = CsProjComparison.Compare(proj1, proj2, Verbose);
+            foreach (var result in results) terminal.AppendLine(result);
         }
     }
 }

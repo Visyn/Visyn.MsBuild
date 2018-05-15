@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using Visyn.Util.Gac;
+using Visyn.Build.Gac;
 
 namespace Visyn.Build.VisualStudio.CsProj
 {

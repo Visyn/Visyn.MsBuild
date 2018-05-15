@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System;
+using System.Xml.Serialization;
 
 namespace Visyn.Build.VisualStudio.CsProj
 {
@@ -42,11 +43,12 @@ namespace Visyn.Build.VisualStudio.CsProj
         [XmlIgnore()]
         public bool WarningLevelSpecified { get; set; }
 
+        public bool AllowUnsafeBlocks { get; set; }
         /// <remarks/>
-        public ProjectPropertyGroupConfiguration Configuration { get; set; }
+        public ConditionalValue Configuration { get; set; }
 
         /// <remarks/>
-        public ProjectPropertyGroupPlatform Platform { get; set; }
+        public ConditionalValue Platform { get; set; }
 
         /// <remarks/>
         public string ProjectGuid { get; set; }
@@ -75,35 +77,11 @@ namespace Visyn.Build.VisualStudio.CsProj
 
         /// <remarks/>
         public string AssemblyVersion { get; set; }
+        /// <remarks/>
+        public string ApplicationVersion { get; set; }
 
         /// <remarks/>
         [XmlAttribute()]
         public string Condition { get; set; }
-    }
-
-    /// <remarks/>
-    [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
-    public class ProjectPropertyGroupConfiguration
-    {
-        /// <remarks/>
-        [XmlAttribute()]
-        public string Condition { get; set; }
-
-        /// <remarks/>
-        [XmlText()]
-        public string Value { get; set; }
-    }
-
-    /// <remarks/>
-    [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
-    public class ProjectPropertyGroupPlatform
-    {
-        /// <remarks/>
-        [XmlAttribute()]
-        public string Condition { get; set; }
-
-        /// <remarks/>
-        [XmlText()]
-        public string Value { get; set; }
     }
 }

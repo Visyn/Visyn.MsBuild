@@ -30,30 +30,6 @@ namespace Visyn.Build.Wix
         [XmlAttribute()]
         public string DefaultTargets { get; set; }
 
-        //[XmlIgnore]
-        //public List<VisualStudioProject> Projects
-        //{
-        //    get
-        //    {
-        //        var list = new List<VisualStudioProject>();
-        //        foreach (var item in Items)
-        //        {
-        //            var itemGroup = item as ProjectItemGroup;
-        //            if (itemGroup?.ProjectReference != null)
-        //            {
-        //                foreach (var reference in itemGroup.ProjectReference)
-        //                {
-        //                    if (VisualStudioProject.IsValidProjectReference(reference))
-        //                    {
-        //                        list.Add(new VisualStudioProject(reference));
-        //                    }
-        //                }
-        //            }
-        //        }
-        //        return list;
-        //    }
-        //}
-
         public static WixProject Deserialize(string fileName, ExceptionHandler exceptionHandler)
         {
             var project = XmlIO.Deserialize<WixProject>(fileName, exceptionHandler);

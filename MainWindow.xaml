@@ -7,7 +7,7 @@
         xmlns:term="clr-namespace:Visyn.Wpf.Controls.Terminal;assembly=Visyn.Wpf"
         mc:Ignorable="d"
         xmlns:local="clr-namespace:Visyn.Build"
-        Title="Visyn.Build" Height="350" Width="525">
+        Title="Visyn.Build" Height="350" Width="525" Loaded="window_Loaded">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="151*"/>

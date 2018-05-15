@@ -9,9 +9,5 @@ namespace Visyn.Build.VisualStudio.CsProj
         /// <remarks/>
         [XmlAttribute()]
         public string Project { get; set; }
-
-        /// <remarks/>
-        [XmlAttribute()]
-        public string Condition { get; set; }
     }
 }

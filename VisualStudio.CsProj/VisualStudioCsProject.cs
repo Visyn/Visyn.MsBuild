@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 using Visyn.Exceptions;
@@ -19,11 +20,14 @@ namespace Visyn.Build.VisualStudio.CsProj
         public override string FileType => "Visual Studio C# Project";
 
         /// <remarks/>
-        [XmlElement("ProjectImport", typeof(Import))]
+        [XmlElement("ProjectImport", typeof(ConditionalImport))]
         [XmlElement("ItemGroup", typeof(ItemGroup))]
         [XmlElement("PropertyGroup", typeof(PropertyGroup))]
+        [XmlElement("Import", typeof(Import))]
         public object[] Items { get; set; }
 
+        [XmlElement("Target", typeof(Target))]
+        public object[] Targets { get; set; }
   
         [XmlIgnore]
         public List<VsAssemblyInfo> Assemblies { get; private set; } = new List<VsAssemblyInfo>();
@@ -34,9 +38,10 @@ namespace Visyn.Build.VisualStudio.CsProj
 
         public override IEnumerable<string> Results(bool verbose)
         {
-            var result = new List<string>() {$"Opened {FileType} File: {ProjectPath}"};
+            var result = new List<string>();
             if (verbose)
             {
+                result.Add($"Opened {FileType} File: {ProjectPath}");
                 result.Add($"TargetFrameworkVersion {TargetFrameworkVersion}");
                 result.Add($"Output {Assemblies.Count} Assemblies");
                 result.AddRange(Assemblies.Select(assembly => '\t' + assembly.ToString()));
@@ -49,11 +54,91 @@ namespace Visyn.Build.VisualStudio.CsProj
                 result.Add($"Missing Files: {MissingFiles.Count}");
                 result.AddRange(MissingFiles.Select(missing => '\t' + missing.Path));
             }
-            else
+            else if(MissingFiles.Count > 0)
             {
-                result.Add($"Files: {SourceFiles.Count} Missing: {MissingFiles.Count} References: {References.Count}");
+                result.Add($"Opened {Path.GetFileName(ProjectPath)} Missing: {MissingFiles.Count}/{SourceFiles.Count} References: {References.Count}");
             }
             return result;
+        }
+
+        public override IEnumerable<string> Compare(ProjectFileBase project, bool verbose)
+        {
+            var csproject = project as VisualStudioCsProject;
+            if (csproject == null) return base.Compare(project, verbose);
+
+            return CsProjComparison.Compare(this, csproject, verbose);
+        }
+
+        /// <summary>
+        /// Merges the specified project into the current project.
+        /// </summary>
+        /// <param name="project">The project whose contents are to be merged into the current project.</param>
+        /// <param name="verbose">if set to <c>true</c> [verbose].</param>
+        /// <returns>IEnumerable&lt;System.String&gt;.</returns>
+        public override IEnumerable<string> Merge(ProjectFileBase project, IEnumerable<string> omit, bool verbose)
+        {
+            var csSourceProject = project as VisualStudioCsProject;
+            if (csSourceProject == null) return base.Merge(project,omit, verbose);
+
+            var result = new List<string>();
+            if(verbose)
+                result.AddRange( new string[]
+                    {
+                        $"Merge {this.FileType}s",
+                        $"\t{ProjectFilename}",
+                        $"\t{project.ProjectFilename}"
+                    });
+
+            var sourceToAdd = new List<ProjectFile>();
+            var sourceToSkip = new List<ProjectFile>();
+            var filteredSource = SourceFiles.Where((f)=>f.ResourceType == ResourceType.SourceFile).ToList();
+            var sourcesToOmit = filteredSource.Select((f) => Path.GetFileName(f.FileName)).ToList();
+
+            if(omit != null) sourcesToOmit.AddRange(omit);
+
+            var csFilteredSource = csSourceProject.SourceFiles.Where((s) => s.ResourceType == ResourceType.SourceFile).ToList();
+            foreach (var csSource in csFilteredSource)
+            {
+                var csFilename = Path.GetFileName(csSource.FileName);
+                if (!sourcesToOmit.Contains(csFilename))
+                    sourceToAdd.Add(csSource);
+                else
+                    sourceToSkip.Add(csSource);
+            }
+            if(verbose || sourceToSkip.Count > 0)
+                result.Add($"Merging {ResourceType.SourceFile}s {Path.GetFileName(project.ProjectFilename)}=>{Path.GetFileName(this.ProjectFilename)} {sourceToAdd.Count}/{csFilteredSource.Count} files.");
+
+            foreach (var item in Items)
+            {
+                var itemGroup = item as ItemGroup;
+                if (itemGroup != null && itemGroup.Compile != null)
+                {
+                    var compile = new List<Compile>(itemGroup.Compile);
+                    foreach(var source in sourceToAdd)
+                    {
+                       compile.Add(source.ToCompile(this.ProjectPath));
+                    }
+                    itemGroup.Compile = compile.ToArray();
+                }
+            }
+
+            if(verbose)
+            {
+                foreach(var source in sourceToAdd)
+                {
+                    result.Add($"\tAdd:\t{source}");
+                }
+            }
+            foreach (var source in sourceToSkip)
+            {
+                result.Add($"\tSkip:\t{source}");
+            }
+            return result;
+        }
+
+        public override void Serialize(string fileName, ExceptionHandler exceptionHandler)
+        {
+            XmlIO.Serialize<VisualStudioCsProject>(this,fileName, exceptionHandler);
         }
 
         public static VisualStudioCsProject Deserialize(string fileName, ExceptionHandler exceptionHandler)

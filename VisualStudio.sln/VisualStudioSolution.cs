@@ -4,8 +4,6 @@ using System.IO;
 using System.Linq;
 using Visyn.Exceptions;
 using Visyn.Text;
-using Visyn.Util.Events;
-using Visyn.Util.Types;
 
 namespace Visyn.Build.VisualStudio.sln
 {
