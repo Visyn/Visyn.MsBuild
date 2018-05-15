@@ -29,8 +29,6 @@ namespace Visyn.Build
 
         public bool Summary { get; set; } = true;
 
-//        MsBuildProject MsBuildProject { get; set; }
-
 
         List<VisualStudioProject> VisualStudioProjects
         {
@@ -60,7 +58,6 @@ namespace Visyn.Build
 
         public MainWindow()
         {
-            var results = App.ProcessArgs();
             if (!App.Headless) InitializeComponent();
             else Application.Current.Shutdown();
         }

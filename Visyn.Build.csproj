@@ -19,7 +19,7 @@
     <AssemblyVersion>1.1.2.455</AssemblyVersion>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <ApplicationVersion>1.1.135.550</ApplicationVersion>
+    <ApplicationVersion>1.1.135.568</ApplicationVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -44,6 +44,9 @@
     <StartupObject>Visyn.Build.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CommonServiceLocator, Version=2.0.3.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.2.0.3\lib\net45\CommonServiceLocator.dll</HintPath>
+    </Reference>
     <Reference Include="DevExpress.Data.v16.1, Version=16.1.9.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Mvvm.v16.1, Version=16.1.9.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Pdf.v16.1.Core, Version=16.1.9.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
@@ -79,12 +82,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CommandLine.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Gac\GacUtil.cs" />
+    <Compile Include="MainWindow2.xaml.cs">
+      <DependentUpon>MainWindow2.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="ApplicationServiceLocator.cs" />
+    <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\ViewModelBase.cs" />
     <Compile Include="VisualStudio.CsProj\ConditionalImport.cs" />
     <Compile Include="VisualStudio.CsProj\ConditionalText.cs" />
     <Compile Include="VisualStudio.CsProj\ConditionalValue.cs" />
@@ -134,6 +144,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="MainWindow2.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -180,6 +194,10 @@
     <ProjectReference Include="..\..\..\Visyn.Windows.Io\Lib\Visyn.Windows.Io.csproj">
       <Project>{8440b6ce-1beb-4329-872f-391cdac0850d}</Project>
       <Name>Visyn.Windows.Io</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Visyn.Wpf.Console\Lib\Visyn.Wpf.Console.csproj">
+      <Project>{0c7fed52-e15b-468d-aee7-ae2195bd3730}</Project>
+      <Name>Visyn.Wpf.Console</Name>
     </ProjectReference>
     <ProjectReference Include="..\Util\Visyn.Util.csproj">
       <Project>{b00939b4-84eb-436c-a32d-219f061201cc}</Project>

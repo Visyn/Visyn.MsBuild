@@ -1,8 +1,12 @@
 ﻿<Application x:Class="Visyn.Build.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:Visyn.Build" >
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Visyn.Build"
+             xmlns:viewModel="clr-namespace:Visyn.Build.ViewModel"
+             >
     <Application.Resources>
-         
+        <!--Global View Model Locator-->
+        <viewModel:ApplicationServiceLocator x:Key="Locator" IsDataSource="True" />
     </Application.Resources>
 </Application>
