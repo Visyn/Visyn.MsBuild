@@ -1,21 +1,23 @@
-﻿<Window x:Name="window" x:Class="Visyn.Build.MainWindow2"
+﻿<Window x:Name="window" x:Class="Visyn.Build.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:term="clr-namespace:Visyn.Wpf.Controls.Terminal;assembly=Visyn.Wpf"
         mc:Ignorable="d"
         xmlns:local="clr-namespace:Visyn.Build"
-        Title="Visyn.Build" Height="350" Width="525"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:console="clr-namespace:Visyn.Wpf.Console;assembly=Visyn.Wpf.Console"
+        Title="Visyn.Build" Height="650" Width="800"
         DataContext="{Binding Source={StaticResource Locator}, Path=MainViewModel}"
         >
-    <!--Loaded="{Binding Loaded}">-->
-    <!--<Window.DataContext>
-        <Binding Source="{StaticResource Locator}" Path="MainViewModel" />
-    </Window.DataContext>-->
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="25"/>
+            <RowDefinition Height="30*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -24,22 +26,37 @@
             <ColumnDefinition Width="88*"/>
         </Grid.ColumnDefinitions>
         <StatusBar x:Name="topStatusBar" Margin="0,0,0,0" VerticalAlignment="Top" VerticalContentAlignment="Center" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" >
-            <Button x:Name="openMenuItem" Grid.Row="0" Height="25" Width="100" 
+            <Button x:Name="openMenuItem" Grid.Row="0" Width="100" 
                 Content="{Binding OpenButtonText}"
                 Command="{Binding OpenCommand, Mode=OneWay}"
                 CommandParameter="" />
-            <Button x:Name="compareMenu" Grid.Row="0" Height="25" Width="100" 
+            <Button x:Name="compareMenu" Grid.Row="0" Width="100" 
                 Content="{Binding CompareButtonText}"
                 Command="{Binding CompareCommand, Mode=OneWay}"
-                CommandParameter=""/>
-            <Button x:Name="gacMenu" Grid.Row="0" Height="25" Width="100" 
+                CommandParameter="{Binding VisualStudioSolution}"/>
+            <Button x:Name="gacMenu" Grid.Row="0" Width="100" 
                 Content="{Binding GacButtonText}"
                 Command="{Binding GacCommand, Mode=OneWay}"
-                CommandParameter=""/>
+                CommandParameter="{Binding Terminal}"/>
             <CheckBox x:Name="Verbose" Content="{Binding VerboseText}" IsChecked="{Binding Verbose}" HorizontalAlignment="Left"/>
             <CheckBox x:Name="Recurse" Content="{Binding RecurseText}" IsChecked="{Binding Recurse}" HorizontalAlignment="Left"/>
             <CheckBox x:Name="Summary" Content="{Binding SummaryText}" IsChecked="{Binding Summary}" HorizontalAlignment="Left"/>
+            <Button x:Name="clearButton" Grid.Row="0" Width="100" 
+                Content="Clear"
+                Command="{Binding ClearCommand, Mode=OneWay}"
+                CommandParameter="{Binding Terminal}"/>
         </StatusBar>
-        <term:Terminal x:Name="terminal" Grid.Row="1" Margin="0,31,0,0" Grid.ColumnSpan="3"></term:Terminal>
+        <console:Terminal  Name="terminal"  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
+                     IsReadOnlyCaretVisible="True"
+                     VerticalScrollBarVisibility="Visible"
+                     IsReadOnly="True"
+                     Prompt=">"
+                     ItemsSource="{Binding Path=Items, Mode=OneWay}"
+                     DataContext="{Binding Source={StaticResource ConsoleServiceLocator}, Path=ConsoleWithSeverityViewModel}"
+                     LineColorConverter="{Binding Source={StaticResource ConsoleServiceLocator}, Path=SeverityLevelColorConverter}"
+                           >
+
+        </console:Terminal>
+        <!--<term:Terminal x:Name="terminal" Grid.Row="1" Margin="0,31,0,0" Grid.ColumnSpan="3"></term:Terminal>-->
     </Grid>
 </Window>

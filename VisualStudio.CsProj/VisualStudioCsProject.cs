@@ -10,13 +10,10 @@ namespace Visyn.Build.VisualStudio.CsProj
 {
     /// <remarks/>
     [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003")]
-    [XmlRoot(Namespace = "http://schemas.microsoft.com/developer/msbuild/2003", 
-        IsNullable = false, 
-        ElementName = "Project")]
+    [XmlRoot(Namespace = "http://schemas.microsoft.com/developer/msbuild/2003", IsNullable = false, ElementName = "Project")]
     public class VisualStudioCsProject : VisualStudioProject
     {
         public static string FileFilter = "Visual Studio c# Project (*.csproj)|*.csproj";
-
         public override string FileType => "Visual Studio C# Project";
 
         /// <remarks/>
@@ -28,7 +25,7 @@ namespace Visyn.Build.VisualStudio.CsProj
 
         [XmlElement("Target", typeof(Target))]
         public object[] Targets { get; set; }
-  
+ 
         [XmlIgnore]
         public List<VsAssemblyInfo> Assemblies { get; private set; } = new List<VsAssemblyInfo>();
 

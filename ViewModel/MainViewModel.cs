@@ -1,39 +1,47 @@
 ﻿using System;
-using System.ComponentModel;
-using Visyn.Exceptions;
+using System.IO;
 using System.Windows.Input;
+using System.Collections.Generic;
+using Microsoft.Win32;
+
+using Visyn.Exceptions;
 using Visyn.Wpf.Console.ViewModel;
-using Visyn.Build.Gac;
 using Visyn.Build.VisualStudio;
 using Visyn.Build.VisualStudio.CsProj;
 using Visyn.Build.VisualStudio.MsBuild;
 using Visyn.Build.VisualStudio.sln;
 using Visyn.Build.VisualStudio.VCxProj;
 using Visyn.Build.Wix;
-using System.Collections.Generic;
 using Visyn.Log;
-using System.IO;
+using Visyn.Build.Gac;
+using Visyn.Io;
 
 namespace Visyn.Build.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
+        public ConsoleWithSeverityViewModel Terminal { get; }
+        #region UI Text
         public string OpenButtonText => "Open";
         public string CompareButtonText => "Compare";
         public string GacButtonText => "Gac";
         public string VerboseText => "Verbose";
         public string RecurseText => "Recurse";
         public string SummaryText => "Summary";
+        #endregion UI Text
 
+        #region UI Options
         public bool Verbose { get; set; }
         public bool Recurse { get; set; }
 
         public bool Summary { get; set; }
+        
+        #endregion  UI Options
 
         public ICommand OpenCommand { get; } //= new RelayCommand<string>(Open, new Func<string,bool>((s) => { return true; }));
         private void Open(string obj)
         {
-            var dialog = new Microsoft.Win32.OpenFileDialog
+            var dialog = new OpenFileDialog
             {
                 Filter = $"{VisualStudioSolution.FileFilter}|{MsBuildProject.FileFilter}|{VisualStudioCsProject.FileFilter}|{WixProject.FileFilter}"
             };
@@ -47,6 +55,30 @@ namespace Visyn.Build.ViewModel
             }
         }
 
+        public ICommand GacCommand { get; } = new RelayCommand<IOutputDevice>(gacPrint, ((o) => (o != null)));
+
+        private static void gacPrint(IOutputDevice terminal)
+        {
+            foreach (var file in GacUtil.Instance.GacFiles.Values)
+            {
+      //          if (file.Name.Contains("CData") || file.FullName.Contains("CData"))
+                    terminal.WriteLine($"{file.Name}\t{file.DirectoryName}");
+            }
+        }
+
+        public ICommand LoadedCommand { get; } = new RelayCommand<IOutputDeviceMultiline>(WindowLoaded, (o) => true);
+
+        private static void WindowLoaded(IOutputDeviceMultiline terminal)
+        {
+           if(App.CommandLineArguments.Count > 0)
+            {
+                CommandLine.ExecuteCommandLine(terminal);
+            }
+        }
+
+        public ICommand CompareCommand { get; }
+        public ICommand ClearCommand { get; } = new ClearCommand();
+
         #region Loaded projects
 
         private List<VisualStudioProject> _visualStudioProjects = new List<VisualStudioProject>();
@@ -55,22 +87,13 @@ namespace Visyn.Build.ViewModel
         List<VisualStudioProject> VisualStudioProjects
         {
             get { return _visualStudioProjects; }
-            set
-            {
-                _visualStudioProjects = value;
-                RaisePropertyChanged(nameof(VisualStudioProjects));
-            }
+            set { Set(ref _visualStudioProjects, value); }
         }
 
         public VisualStudioSolution VisualStudioSolution
         {
             get { return _visualStudioSolution; }
-            set
-            {
-                _visualStudioSolution = value;
-                RaisePropertyChanged(nameof(VisualStudioSolution));
-                RaisePropertyChanged(nameof(SolutionLoaded));
-            }
+            set { if(Set(ref _visualStudioSolution,value)) RaisePropertyChanged(nameof(SolutionLoaded)); }
         }
 
         public List<ProjectFile> MissingFiles { get; set; } = new List<ProjectFile>();
@@ -80,19 +103,32 @@ namespace Visyn.Build.ViewModel
         #endregion Loaded projects
         public MainViewModel(ConsoleWithSeverityViewModel console, IExceptionHandler handler) : base(handler)
         {
-            terminal = console; // new ConsoleWithSeverityViewModel(10000, Dispatcher);
-            OpenCommand = new RelayCommand<string>(Open, new Func<string, bool>((s) => { return true; }));
+            Terminal = console; // new ConsoleWithSeverityViewModel(10000, Dispatcher);
+      
+            OpenCommand = new RelayCommand<string>(Open, ((s) => true));
+            CompareCommand = new RelayCommand<ProjectFileBase>(Compare, ((p) => p != null));
             Verbose = CommandLine.Verbose;
         }
 
-        ConsoleWithSeverityViewModel terminal;
 
-        private void ShowComparison(VisualStudioSolution visualStudioSolution, ProjectFileBase project)
+        private void Compare(ProjectFileBase baseProject)
         {
-            IEnumerable<string> result = visualStudioSolution.Compare(project, Verbose);
-            foreach (var line in result)
+            if (baseProject != null)
             {
-                terminal.WriteLine(line);
+                var dialog = new OpenFileDialog
+                {
+                    Filter = $"{MsBuildProject.FileFilter}|{WixProject.FileFilter}"
+                };
+                if (dialog.ShowDialog() == true)
+                {
+                    var filename = dialog.FileName;
+                    var project = OpenProject(filename, false);
+                    if (project != null)
+                    {
+                        var result = baseProject.Compare(project, Verbose);
+                        Terminal.Write(result);
+                    }
+                }
             }
         }
 
@@ -104,11 +140,16 @@ namespace Visyn.Build.ViewModel
             else if (filename.EndsWith(".csproj")) project = OpenVisualStudioCsProject(filename);
             else if (filename.EndsWith(".vcxproj")) project = OpenVisualStudioVCxProject(filename);
             else if (filename.EndsWith(".proj")) project = OpenMsBuildProject(filename);
-            else if (filename.EndsWith(".sln")) project = OpenVisualStudioSolution(filename);
+            else if (filename.EndsWith(".sln")) project = VisualStudioSolution = OpenVisualStudioSolution(filename);
+
             else base.HandleException(this, new Exception($"Un-registered file extension {System.IO.Path.GetExtension(filename)}"));
 
             if (project != null)
             {
+                Terminal.WriteLine($"{project.FileType} opened: {project.ProjectPath}");
+                Terminal.Write(project.Results(Verbose));
+                if (project.ImportFailed) FileOpenFailed(project.FileType, filename);
+
                 MissingProjects.AddRange(project.MissingProjects);
                 MissingFiles.AddRange(project.MissingFiles);
                 if (recurse)
@@ -119,6 +160,7 @@ namespace Visyn.Build.ViewModel
                     }
                 }
             }
+            else HandleException(this, new Exception($"File open failed! [{filename}]"));
             return project;
         }
 
@@ -131,71 +173,50 @@ namespace Visyn.Build.ViewModel
             {
                 if (project == null) continue;
                 var file = Path.GetFileName(project.ProjectFilename);
-                terminal.WriteLine($"\t{file}\t.net {project.TargetFrameworkVersion}\tTools {project.ToolsVersion}");
+                Terminal.WriteLine($"\t{file}\t.net {project.TargetFrameworkVersion}\tTools {project.ToolsVersion}");
             }
             var severity = MissingProjects.Count > 0 ? SeverityLevel.Warning : SeverityLevel.Informational;
-            terminal.WriteLine($"Missing Projects: [{MissingProjects.Count}]", severity);
+            Terminal.WriteLine($"Missing Projects: [{MissingProjects.Count}]", severity);
             foreach (var missing in MissingProjects)
             {
-                terminal.WriteLine("\t" + missing.Path, severity);
+                Terminal.WriteLine("\t" + missing.Path, severity);
             }
             severity = MissingFiles.Count > 0 ? SeverityLevel.Warning : SeverityLevel.Informational;
-            terminal.WriteLine($"Missing Files [{MissingFiles.Count}]", severity);
+            Terminal.WriteLine($"Missing Files [{MissingFiles.Count}]", severity);
             foreach (var file in MissingFiles)
             {
-                terminal.WriteLine("\t" + file.Path, severity);
+                Terminal.WriteLine("\t" + file.Path, severity);
             }
         }
 
-        private ProjectFileBase OpenVisualStudioSolution(string filename)
+
+        private VisualStudioSolution OpenVisualStudioSolution(string filename)
         {
-            VisualStudioSolution = VisualStudioSolution.Deserialize(filename, terminal.HandleException);
-            if (VisualStudioSolution != null)
-            {
-                DisplayResults(VisualStudioSolution);
-            }
-            else
-            {
-                FileOpenFailed("Visual Studio Solution", filename);
-            }
-            return VisualStudioSolution;
+            var solution = VisualStudioSolution.Deserialize(filename, Terminal.HandleException);
+            if (solution == null) FileOpenFailed("Visual Studio Solution", filename);
+
+            return solution;
         }
 
-        private ProjectFileBase OpenMsBuildProject(string filename)
+        private MsBuildProject OpenMsBuildProject(string filename)
         {
-            var msBuildProject = MsBuildProject.Deserialize(filename, terminal.HandleException);
-            if (msBuildProject != null)
-            {
-                DisplayResults(msBuildProject);
-            }
-            else
-            {
-                FileOpenFailed("MsBuild Project", filename);
-            }
+            var msBuildProject = MsBuildProject.Deserialize(filename, Terminal.HandleException);
+            if (msBuildProject == null) FileOpenFailed("MsBuild Project", filename);
             return msBuildProject;
         }
 
-        private ProjectFileBase OpenWixProject(string filename)
+        private WixProject OpenWixProject(string filename)
         {
-            var wixProject = WixProject.Deserialize(filename, terminal.HandleException);
-            if (wixProject != null)
-            {
-                DisplayResults(wixProject);
-            }
-            else
-            {
-                FileOpenFailed("Wix Project", filename);
-            }
+            var wixProject = WixProject.Deserialize(filename, Terminal.HandleException);
+            if (wixProject == null) FileOpenFailed("Wix Project", filename);
             return wixProject;
         }
 
         private VisualStudioCsProject OpenVisualStudioCsProject(string filename)
         {
-            var cSharpProject = VisualStudioCsProject.Deserialize(filename, terminal.HandleException);
+            var cSharpProject = VisualStudioCsProject.Deserialize(filename, Terminal.HandleException);
             if (cSharpProject != null)
             {
-                DisplayResults(cSharpProject);
-                if (cSharpProject.ImportFailed) FileOpenFailed(cSharpProject.FileType, filename);
                 VisualStudioProjects.Add(cSharpProject);
             }
             else
@@ -207,11 +228,9 @@ namespace Visyn.Build.ViewModel
 
         private VisualStudioVCxProject OpenVisualStudioVCxProject(string filename)
         {
-            var cProject = VisualStudioVCxProject.Deserialize(filename, terminal.HandleException);
+            var cProject = VisualStudioVCxProject.Deserialize(filename, Terminal.HandleException);
             if (cProject != null)
             {
-                DisplayResults(cProject);
-                if (cProject.ImportFailed) FileOpenFailed(cProject.FileType, filename);
                 VisualStudioProjects.Add(cProject);
             }
             else
@@ -221,15 +240,10 @@ namespace Visyn.Build.ViewModel
             return cProject;
         }
 
-        private void DisplayResults(ProjectFileBase project)
-        {
-            var results = project.Results(Verbose);
-            terminal.Write(results);
-        }
 
         private void FileOpenFailed(string filetype, string filename)
         {
-            terminal.WriteLine($"Opening {filetype} failed! File: {filename}",Log.SeverityLevel.Error);
+            Terminal.WriteLine($"Opening {filetype} failed! File: {filename}",Log.SeverityLevel.Error);
         }
     }
 }

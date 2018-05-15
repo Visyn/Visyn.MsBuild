@@ -32,7 +32,7 @@ namespace Visyn.Build
             }
             else
             {
-                StartupUri = new Uri("MainWindow2.xaml", UriKind.Relative);
+                StartupUri = new Uri("MainWindow.xaml", UriKind.Relative);
             }
         }
 

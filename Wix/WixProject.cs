@@ -9,9 +9,7 @@ namespace Visyn.Build.Wix
 {
     /// <remarks/>
     [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/developer/msbuild/2003", TypeName = "WixProject")]
-    [XmlRoot(Namespace = "http://schemas.microsoft.com/developer/msbuild/2003", 
-        IsNullable = false, 
-        ElementName = "Project")]
+    [XmlRoot(Namespace = "http://schemas.microsoft.com/developer/msbuild/2003", IsNullable = false, ElementName = "Project")]
     public class WixProject : ProjectFileBase
     {
         public static string FileFilter = "Wix Project(*.wixproj)|*.wixproj";
@@ -57,19 +55,5 @@ namespace Visyn.Build.Wix
         {
             return base.Results(verbose);
         }
-        //public override IEnumerable<string> VerboseResult()
-        //{
-        //    //var projects = WixProject.Projects;
-        //    //var shortFile = Path.GetFileName(filename);
-        //    //terminal.AppendLine($"Opened Wix Project File: {shortFile}");
-        //    //terminal.AppendLine($"Found {projects.Count} projects");
-        //    //foreach (var project in projects)
-        //    //{
-        //    //    terminal.AppendLine(project.Name);
-        //    //    terminal.AppendLine('\t' + project.Include);
-        //    //    terminal.AppendLine('\t' + project.Project);
-        //    //}
-        //    return base.VerboseResult();
-        //}
     }
 }

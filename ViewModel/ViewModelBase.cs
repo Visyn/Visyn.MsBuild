@@ -52,6 +52,7 @@ namespace Visyn.Build.ViewModel
         protected bool Set<T>(ref T backingField, T newValue, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(backingField, newValue)) return false;
+            backingField = newValue;
             if(!string.IsNullOrWhiteSpace(propertyName)) RaisePropertyChanged(propertyName);
             return true;
         }
@@ -68,6 +69,7 @@ namespace Visyn.Build.ViewModel
         protected bool SetDelayedNotify<T>(ref T backingField, T newValue, double delayMs = 0, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(backingField, newValue)) return false;
+            backingField = newValue;
             if (!string.IsNullOrWhiteSpace(propertyName)) Dispatcher.DelayedBeginInvoke(TimeSpan.FromMilliseconds(delayMs), () => { RaisePropertyChanged(propertyName); });
             return true;
         }
@@ -77,14 +79,14 @@ namespace Visyn.Build.ViewModel
         /// </summary>
         /// <typeparam name="T">The type of the property that
         /// changed.</typeparam>
-        /// <param name="field">The field storing the property's value.</param>
+        /// <param name="backingField">The field storing the property's value.</param>
         /// <param name="newValue">The property's value after the change
         /// occurred.</param>
         /// <returns>True if the value changed, false otherwise.</returns>
-        protected bool SetWithoutNotify<T>(ref T field, T newValue)
+        protected bool SetWithoutNotify<T>(ref T backingField, T newValue)
         {
-            if (EqualityComparer<T>.Default.Equals(field, newValue)) return false;
-            field = newValue;
+            if (EqualityComparer<T>.Default.Equals(backingField, newValue)) return false;
+            backingField = newValue;
             return true;
         }
 

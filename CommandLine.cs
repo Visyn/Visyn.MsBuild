@@ -6,6 +6,7 @@ using System.IO;
 using Visyn.Collection;
 using System.Linq;
 using System.Diagnostics;
+using Visyn.Io;
 
 namespace Visyn.Build
 {
@@ -50,6 +51,14 @@ namespace Visyn.Build
         {
             if (string.IsNullOrEmpty(key)) return;
             dict.Add(key.ToLower(), value);
+        }
+
+        public static IList<string> ExecuteCommandLine(IOutputDeviceMultiline output)
+        {
+            var result = ExecuteCommandLine();
+            if (output != null)
+                output.Write(result);
+            return result;
         }
 
         public static IList<string> ExecuteCommandLine()
