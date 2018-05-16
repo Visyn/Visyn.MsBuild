@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\packages\Microsoft.Net.Compilers.2.7.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\..\packages\Microsoft.Net.Compilers.2.7.0\build\Microsoft.Net.Compilers.props')" />
-  <Import Project="..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="..\..\packages\Microsoft.Net.Compilers.2.8.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\..\packages\Microsoft.Net.Compilers.2.8.0\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -19,7 +18,7 @@
     <AssemblyVersion>1.1.2.455</AssemblyVersion>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <ApplicationVersion>1.1.136.612</ApplicationVersion>
+    <ApplicationVersion>1.1.136.625</ApplicationVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -53,14 +52,11 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
@@ -81,11 +77,11 @@
     <Compile Include="CommandLine.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Gac\GacUtil.cs" />
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\Annotations.cs" />
-    <Compile Include="ApplicationServiceLocator.cs" />
+    <Compile Include="ServiceLocator\ApplicationServiceLocator.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
     <Compile Include="VisualStudio.CsProj\ConditionalImport.cs" />
@@ -95,7 +91,7 @@
     <Compile Include="VisualStudio.CsProj\EmbeddedResource.cs" />
     <Compile Include="VisualStudio.CsProj\Import.cs" />
     <Compile Include="VisualStudio.CsProj\ItemGroup.cs" />
-    <Compile Include="ProjectFileBase.cs" />
+    <Compile Include="Project\ProjectFileBase.cs" />
     <Compile Include="VisualStudio.CsProj\ProjectItemGroup.cs" />
     <Compile Include="VisualStudio.CsProj\ProjectItemGroupApplicationDefinition.cs" />
     <Compile Include="VisualStudio.CsProj\Compile.cs" />
@@ -103,14 +99,14 @@
     <Compile Include="VisualStudio.CsProj\ProjectReference.cs" />
     <Compile Include="VisualStudio.CsProj\Reference.cs" />
     <Compile Include="VisualStudio.CsProj\PropertyGroup.cs" />
-    <Compile Include="ResourceType.cs" />
+    <Compile Include="Project\ResourceType.cs" />
     <Compile Include="VisualStudio.CsProj\Target.cs" />
     <Compile Include="VisualStudio.CsProj\VisualStudioCsProject.cs" />
-    <Compile Include="ProjectFile.cs" />
+    <Compile Include="Project\ProjectFile.cs" />
     <Compile Include="VisualStudio.CsProj\VsAssemblyInfo.cs" />
     <Compile Include="VisualStudio.msbuild\MsBuild.cs" />
     <Compile Include="VisualStudio.sln\VisualStudioSolution.cs" />
-    <Compile Include="NestedProject.cs" />
+    <Compile Include="Project\NestedProject.cs" />
     <Compile Include="VisualStudio.VCxProj\ItemsChoiceType.cs" />
     <Compile Include="VisualStudio.VCxProj\ItemsChoiceType1.cs" />
     <Compile Include="VisualStudio.VCxProj\ItemsChoiceType2.cs" />
@@ -137,7 +133,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="MainWindow.xaml">
+    <Page Include="View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -170,9 +166,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ServiceLocator\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\..\..\Visyn.Collection\Lib\Visyn.Collection.csproj">
       <Project>{67f9d3a8-f71e-4428-913f-c37ae82cdb24}</Project>
@@ -196,8 +190,7 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
-    <Error Condition="!Exists('..\..\packages\Microsoft.Net.Compilers.2.7.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Net.Compilers.2.7.0\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.Net.Compilers.2.8.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Net.Compilers.2.8.0\build\Microsoft.Net.Compilers.props'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

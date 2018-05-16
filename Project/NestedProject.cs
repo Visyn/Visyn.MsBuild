@@ -22,46 +22,41 @@
 // SOFTWARE.
 #endregion
 
-using System.Collections.Generic;
-using System.Linq;
-using System.Xml.Serialization;
-using Visyn.Exceptions;
 
-namespace Visyn.Build.VisualStudio
+using Visyn.Build.Wix;
+
+namespace Visyn.Build
 {
-    public abstract class VisualStudioProject : ProjectFileBase
+    public class NestedProject
     {
-        [XmlIgnore]
-        public string TargetFrameworkVersion { get; set; }
-        [XmlAttribute()]
-        public string DefaultTargets { get; set; }
+        public string Path { get; }
 
-        /// <remarks/>
-        [XmlAttribute()]
-        public decimal ToolsVersion { get; set; }
+        public string Name { get; set; }
+        public string Include { get; }
+        public string Project { get; }
 
+        public bool FileExists => System.IO.File.Exists(this.Path);
+        public string Guid { get; set; }
 
-        [XmlIgnore]
-        public List<string> Dependencies
+        public NestedProject(ProjectFileBase project, ProjectItemGroupProjectReference reference)
         {
-            get
-            {
-                var dependancies = new List<string>();
-                foreach (var item in SourceFiles)
-                {
-                    if (string.IsNullOrWhiteSpace(item.Dependancy)) continue;
-                    var dep = item.Dependancy.Trim();
-                    if (!dependancies.Contains(dep)) dependancies.Add(dep);
-                }
-                return dependancies;
-            }
+            Name = reference.Name;
+            Include = reference.Include;
+            Project = reference.Project;
+            Path = project.GetFullPath(Include);
+            //Path = System.IO.Path.GetFullPath(System.IO.Path.Combine(projectPath, Include));
         }
 
-        protected override void Analyze(string fileName, ExceptionHandler exceptionHandler)
+        public NestedProject(ProjectFileBase project, string item)
         {
-            MissingFiles.AddRange(
-                SourceFiles.Where(
-                    source => (!source.FileExists && (source.ResourceType != ResourceType.Reference))));
+            Name = item;
+            Path = project.GetFullPath(item);
+            //Path = System.IO.Path.GetFullPath(System.IO.Path.Combine(projectPath,item));
+        }
+
+        public static bool IsValidProjectReference(ProjectItemGroupProjectReference reference)
+        {
+            return !string.IsNullOrWhiteSpace(reference?.Name);
         }
     }
 }

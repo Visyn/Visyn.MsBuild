@@ -1,7 +1,5 @@
 ﻿
 using System.Windows;
-using Visyn.Build.ViewModel;
-using Visyn.Wpf.Console.ViewModel;
 
 namespace Visyn.Build
 {

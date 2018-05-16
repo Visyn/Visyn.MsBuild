@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Threading;
-using Visyn.Build.ViewModel;
+using Visyn.Build.ServiceLocator;
 
 namespace Visyn.Build
 {
@@ -32,7 +32,7 @@ namespace Visyn.Build
             }
             else
             {
-                StartupUri = new Uri("MainWindow.xaml", UriKind.Relative);
+                StartupUri = new Uri("View/MainWindow.xaml", UriKind.Relative);
             }
         }
 
