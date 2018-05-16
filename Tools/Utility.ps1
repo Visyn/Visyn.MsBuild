@@ -42,6 +42,7 @@ Function Get-Flag { Param( [Parameter(ValueFromPipeline)] $args, [string] $name 
     process { #Process all items in the pipeline
         $args | ForEach-Object { 
             $index++;
+            if($_ -eq $null) { continue; }
             $str = $_.ToString();
 
             if($assignNext -eq $true)
