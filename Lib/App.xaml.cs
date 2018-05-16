@@ -16,7 +16,7 @@ namespace Visyn.Build
 
         protected override void OnStartup(StartupEventArgs args)
         {
-            ApplicationServiceLocator.Register<Dispatcher>(Dispatcher.CurrentDispatcher);
+            ApplicationServiceLocator.Register<Dispatcher>(Dispatcher.CurrentDispatcher,true);
             base.OnStartup(args);
             // Add the event handler for handling UI thread exceptions to the event.
             DispatcherUnhandledException += OnDispatcherUnhandledException;

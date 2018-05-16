@@ -8,9 +8,9 @@
     <ProjectGuid>{AB7A1A6E-8A91-44ED-8B53-9A7FE764ACAD}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Visyn.Build</RootNamespace>
-    <AssemblyName>Visyn.Build</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <RootNamespace>Visyn.MsBuild</RootNamespace>
+    <AssemblyName>Visyn.MsBuild</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -18,7 +18,8 @@
     <AssemblyVersion>1.1.2.455</AssemblyVersion>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <ApplicationVersion>1.1.136.625</ApplicationVersion>
+    <ApplicationVersion>1.1.136.632</ApplicationVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -168,19 +169,19 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Visyn.Collection\Lib\Visyn.Collection.csproj">
+    <ProjectReference Include="..\..\Visyn.Collection\Lib\Visyn.Collection.csproj">
       <Project>{67f9d3a8-f71e-4428-913f-c37ae82cdb24}</Project>
       <Name>Visyn.Collection</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Visyn.Public\Lib\Visyn.Public.csproj">
+    <ProjectReference Include="..\..\Visyn.Public\Lib\Visyn.Public.csproj">
       <Project>{aba4963b-56ba-4b42-8c2a-17be811e5f8e}</Project>
       <Name>Visyn.Public</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Visyn.Windows.Io\Lib\Visyn.Windows.Io.csproj">
+    <ProjectReference Include="..\..\Visyn.Windows.Io\Lib\Visyn.Windows.Io.csproj">
       <Project>{8440b6ce-1beb-4329-872f-391cdac0850d}</Project>
       <Name>Visyn.Windows.Io</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Visyn.Wpf.Console\Lib\Visyn.Wpf.Console.csproj">
+    <ProjectReference Include="..\..\Visyn.Wpf.Console\Lib\Visyn.Wpf.Console.csproj">
       <Project>{0c7fed52-e15b-468d-aee7-ae2195bd3730}</Project>
       <Name>Visyn.Wpf.Console</Name>
     </ProjectReference>

@@ -7,8 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Projects Include="$(MSBuildProjectDirectory)\..\..\Lib\Visyn.Public.csproj"/>
-    <Projects Include="$(MSBuildProjectDirectory)\..\..\Test\Visyn.Public.Test.csproj"/>
+    <Projects Include="$(MSBuildProjectDirectory)\..\..\..\Visyn.Public\Lib\Visyn.Public.csproj"/>
+	<Projects Include="$(MSBuildProjectDirectory)\..\..\..\Visyn.Collection\Lib\Visyn.Collection.csproj"/>
+	<Projects Include="$(MSBuildProjectDirectory)\..\..\..\Visyn.Mathematics\Lib\Visyn.Mathematics.csproj"/>
+	<Projects Include="$(MSBuildProjectDirectory)\..\..\..\Visyn.Wpf.Console\Lib\Visyn.Wpf.Console.csproj"/>
+	<Projects Include="$(MSBuildProjectDirectory)\..\..\..\Visyn.Windows.Io\Lib\Visyn.Windows.Io.csproj"/>
+	
+	<Projects Include="$(MSBuildProjectDirectory)\..\..\Lib\Visyn.MsBuild.csproj"/>
+<!--    <Projects Include="$(MSBuildProjectDirectory)\..\..\Test\Visyn.MsBuild.Test.csproj"/> -->
 
   </ItemGroup>
 
