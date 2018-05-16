@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Microsoft.Win32;
 
 using Visyn.Exceptions;
+using Visyn.Collection;
 using Visyn.Wpf.Console.ViewModel;
 using Visyn.Build.VisualStudio;
 using Visyn.Build.VisualStudio.CsProj;
@@ -21,6 +22,9 @@ namespace Visyn.Build.ViewModel
     public class MainViewModel : ViewModelBase
     {
         public ConsoleWithSeverityViewModel Terminal { get; }
+
+        public MainViewModel MainViewModelProperty => this;
+
         #region UI Text
         public string OpenButtonText => "Open";
         public string CompareButtonText => "Compare";
@@ -38,43 +42,32 @@ namespace Visyn.Build.ViewModel
         
         #endregion  UI Options
 
-        public ICommand OpenCommand { get; } //= new RelayCommand<string>(Open, new Func<string,bool>((s) => { return true; }));
-        private void Open(string obj)
+        public ICommand OpenCommand { get; } = new RelayCommand<MainViewModel>(Open, (vm)=> vm != null);
+        private static void Open(MainViewModel vm)
         {
-            var dialog = new OpenFileDialog
-            {
-                Filter = $"{VisualStudioSolution.FileFilter}|{MsBuildProject.FileFilter}|{VisualStudioCsProject.FileFilter}|{WixProject.FileFilter}"
-            };
+            var dialog = new OpenFileDialog { Filter = $"{VisualStudioSolution.FileFilter}|{MsBuildProject.FileFilter}|{VisualStudioCsProject.FileFilter}|{WixProject.FileFilter}" };
             if (dialog.ShowDialog() == true)
             {
-                var filename = dialog.FileName;
-                MissingProjects.Clear();
-                MissingFiles.Clear();
-                OpenProject(filename, Recurse);
-                ShowSummary();
+                vm.MissingProjects.Clear();
+                vm.MissingFiles.Clear();
+                vm.OpenProject(dialog.FileName, vm.Recurse);
+                vm.ShowSummary();
             }
         }
 
-        public ICommand GacCommand { get; } = new RelayCommand<IOutputDevice>(gacPrint, ((o) => (o != null)));
+        public ICommand GacCommand { get; } = new RelayCommand<IOutputDeviceMultiline>(gacPrint, ((o) => (o != null)));
 
-        private static void gacPrint(IOutputDevice terminal)
+        private static void gacPrint(IOutputDeviceMultiline terminal)
         {
+            var result = new List<string>();
             foreach (var file in GacUtil.Instance.GacFiles.Values)
             {
-      //          if (file.Name.Contains("CData") || file.FullName.Contains("CData"))
-                    terminal.WriteLine($"{file.Name}\t{file.DirectoryName}");
+                result.Add($"{file.Name}\t{file.DirectoryName}");
             }
+            terminal.Write(result);
         }
 
-        public ICommand LoadedCommand { get; } = new RelayCommand<IOutputDeviceMultiline>(WindowLoaded, (o) => true);
-
-        private static void WindowLoaded(IOutputDeviceMultiline terminal)
-        {
-           if(App.CommandLineArguments.Count > 0)
-            {
-                CommandLine.ExecuteCommandLine(terminal);
-            }
-        }
+        public ICommand LoadedCommand { get; } = new RelayCommand<IOutputDeviceMultiline>(CommandLine.ExecuteCommandLine);
 
         public ICommand CompareCommand { get; }
         public ICommand ClearCommand { get; } = new ClearCommand();
@@ -103,9 +96,7 @@ namespace Visyn.Build.ViewModel
         #endregion Loaded projects
         public MainViewModel(ConsoleWithSeverityViewModel console, IExceptionHandler handler) : base(handler)
         {
-            Terminal = console; // new ConsoleWithSeverityViewModel(10000, Dispatcher);
-      
-            OpenCommand = new RelayCommand<string>(Open, ((s) => true));
+            Terminal = console;
             CompareCommand = new RelayCommand<ProjectFileBase>(Compare, ((p) => p != null));
             Verbose = CommandLine.Verbose;
         }

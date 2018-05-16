@@ -19,7 +19,7 @@
     <AssemblyVersion>1.1.2.455</AssemblyVersion>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <ApplicationVersion>1.1.135.586</ApplicationVersion>
+    <ApplicationVersion>1.1.136.612</ApplicationVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -81,8 +81,8 @@
     <Compile Include="CommandLine.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Gac\GacUtil.cs" />
-    <Compile Include="MainWindow2.xaml.cs">
-      <DependentUpon>MainWindow2.xaml</DependentUpon>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ApplicationServiceLocator.cs" />
@@ -137,7 +137,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="MainWindow2.xaml">
+    <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -189,14 +189,6 @@
     <ProjectReference Include="..\..\..\Visyn.Wpf.Console\Lib\Visyn.Wpf.Console.csproj">
       <Project>{0c7fed52-e15b-468d-aee7-ae2195bd3730}</Project>
       <Name>Visyn.Wpf.Console</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Util\Visyn.Util.csproj">
-      <Project>{b00939b4-84eb-436c-a32d-219f061201cc}</Project>
-      <Name>Visyn.Util</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Wpf\Visyn.Wpf.csproj">
-      <Project>{883254c2-cc7d-43a1-9403-15288878b3c5}</Project>
-      <Name>Visyn.Wpf</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -12,12 +12,12 @@
         >
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadedCommand}"/>
+            <i:InvokeCommandAction Command="{Binding LoadedCommand}" CommandParameter="{Binding Terminal}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30*"/>
+            <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -26,15 +26,15 @@
             <ColumnDefinition Width="88*"/>
         </Grid.ColumnDefinitions>
         <StatusBar x:Name="topStatusBar" Margin="0,0,0,0" VerticalAlignment="Top" VerticalContentAlignment="Center" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" >
-            <Button x:Name="openMenuItem" Grid.Row="0" Width="100" 
+            <Button x:Name="openMenuItem" Width="100" 
                 Content="{Binding OpenButtonText}"
                 Command="{Binding OpenCommand, Mode=OneWay}"
-                CommandParameter="" />
-            <Button x:Name="compareMenu" Grid.Row="0" Width="100" 
+                CommandParameter="{Binding MainViewModelProperty}" />
+            <Button x:Name="compareMenu" Width="100" 
                 Content="{Binding CompareButtonText}"
                 Command="{Binding CompareCommand, Mode=OneWay}"
                 CommandParameter="{Binding VisualStudioSolution}"/>
-            <Button x:Name="gacMenu" Grid.Row="0" Width="100" 
+            <Button x:Name="gacMenu" Width="100" 
                 Content="{Binding GacButtonText}"
                 Command="{Binding GacCommand, Mode=OneWay}"
                 CommandParameter="{Binding Terminal}"/>
@@ -53,10 +53,8 @@
                      Prompt=">"
                      ItemsSource="{Binding Path=Items, Mode=OneWay}"
                      DataContext="{Binding Source={StaticResource ConsoleServiceLocator}, Path=ConsoleWithSeverityViewModel}"
-                     LineColorConverter="{Binding Source={StaticResource ConsoleServiceLocator}, Path=SeverityLevelColorConverter}"
-                           >
-
-        </console:Terminal>
+                     LineColorConverter="{Binding Source={StaticResource ConsoleServiceLocator}, Path=SeverityLevelColorConverter}" Margin="0"
+                           />
         <!--<term:Terminal x:Name="terminal" Grid.Row="1" Margin="0,31,0,0" Grid.ColumnSpan="3"></term:Terminal>-->
     </Grid>
 </Window>

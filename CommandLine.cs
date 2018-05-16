@@ -53,12 +53,10 @@ namespace Visyn.Build
             dict.Add(key.ToLower(), value);
         }
 
-        public static IList<string> ExecuteCommandLine(IOutputDeviceMultiline output)
+        public static void ExecuteCommandLine(IOutputDeviceMultiline output)
         {
             var result = ExecuteCommandLine();
-            if (output != null)
-                output.Write(result);
-            return result;
+            output?.Write(result);
         }
 
         public static IList<string> ExecuteCommandLine()
