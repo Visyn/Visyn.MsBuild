@@ -129,6 +129,7 @@ namespace Visyn.Build.VisualStudio.CsProj
             if(verbose || sourceToSkip.Count > 0)
                 result.Add($"Merging {ResourceType.SourceFile}s {Path.GetFileName(project.ProjectFilename)}=>{Path.GetFileName(this.ProjectFilename)} {sourceToAdd.Count}/{csFilteredSource.Count} files.");
 
+            var folder = Path.GetFileNameWithoutExtension(csSourceProject.ProjectFilename);
             foreach (var item in Items)
             {
                 var itemGroup = item as ItemGroup;
@@ -137,7 +138,7 @@ namespace Visyn.Build.VisualStudio.CsProj
                     var compile = new List<Compile>(itemGroup.Compile);
                     foreach(var source in sourceToAdd)
                     {
-                       compile.Add(source.ToCompile(this.ProjectPath));
+                       compile.Add(source.ToCompile(this.ProjectPath, folder));
                     }
                     itemGroup.Compile = compile.ToArray();
                 }

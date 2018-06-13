@@ -18,7 +18,7 @@
     <AssemblyVersion>1.1.2.455</AssemblyVersion>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <ApplicationVersion>1.1.136.632</ApplicationVersion>
+    <ApplicationVersion>1.1.138.643</ApplicationVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

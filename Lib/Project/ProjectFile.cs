@@ -22,6 +22,7 @@
 // SOFTWARE.
 #endregion
 
+using Visyn.Windows.Io.Files;
 using Visyn.Build.VisualStudio.CsProj;
 
 namespace Visyn.Build
@@ -58,18 +59,13 @@ namespace Visyn.Build
                 $"{ResourceType}\t{FileName}";
         }
 
-        public  Compile ToCompile(string projectPath)
+        /// <exclude />
+        public Compile ToCompile(string projectPath,string folder=null)
         {
-            // public string AutoGen { get; set; }
-            // public string DesignTime { get; set; }
-            // public string DependentUpon { get; set; }
-            // public string Include { get; set; }
-            var path = this.Path;
-            if(this.Path.Contains(projectPath))
-            {
-                path = this.Path.Replace(projectPath, "");
-            }
-            return new Compile() { Include = path };
+            var path = PathExtensions.RelativePath(projectPath, Path);
+            var fileName = System.IO.Path.GetFileName(path);
+            if (string.IsNullOrEmpty(folder)) return new Compile() { Include = path };
+            return new Compile() { Include = path, Link= $"{folder}\\{fileName}" };
         }
 
         public static ProjectFile CreateIfValid(ProjectItemGroup item, ResourceType resourceType, ProjectFileBase project)

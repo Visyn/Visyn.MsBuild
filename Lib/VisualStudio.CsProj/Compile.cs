@@ -14,5 +14,7 @@ namespace Visyn.Build.VisualStudio.CsProj
 
         /// <remarks/>
         public string DependentUpon { get; set; }
+
+        public string Link { get; set; }
     }
 }
